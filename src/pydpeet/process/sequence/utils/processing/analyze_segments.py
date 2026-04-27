@@ -1,6 +1,6 @@
 import pandas as pd
 
-from pydpeet.process.sequence.utils.console_prints.log_time import log_time
+from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
 
 
 def _match_rules(
@@ -355,13 +355,13 @@ def _analyze_segments(
         df_segments_and_sequences (pd.DataFrame): A DataFrame containing the columns 'ID', 'Sequence', and all columns
                                                   specified in SEGMENT_SEQUENCE_CONFIG.
     """
-    with log_time("tag simple segments", SHOW_RUNTIME):
+    with _log_time("tag simple segments", SHOW_RUNTIME):
         df = _tag_simple(df, SEGMENT_SEQUENCE_CONFIG)
-    with log_time("tag sequences", SHOW_RUNTIME):
+    with _log_time("tag sequences", SHOW_RUNTIME):
         df = _tag_sequences(df, SEGMENT_SEQUENCE_CONFIG)
-    with log_time("assign longest sequence", SHOW_RUNTIME):
+    with _log_time("assign longest sequence", SHOW_RUNTIME):
         df = _assign_longest_sequence(df, SEGMENT_SEQUENCE_CONFIG)
-    with log_time("separate sequences and df_with_segments", SHOW_RUNTIME):
+    with _log_time("separate sequences and df_with_segments", SHOW_RUNTIME):
         segment_keys = [key for key in SEGMENT_SEQUENCE_CONFIG.keys() if key in df.columns]
         df_segments_and_sequences = df[["ID", "Sequence"] + segment_keys]
 

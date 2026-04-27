@@ -4,7 +4,7 @@ from time import perf_counter
 
 
 @contextmanager
-def log_time(
+def _log_time(
     description: str = "",
     SHOW_RUNTIME: bool = True,
 ):

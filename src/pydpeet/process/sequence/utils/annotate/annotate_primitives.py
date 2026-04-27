@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from numba import njit
 
-from pydpeet.process.sequence.utils.console_prints.log_time import log_time
+from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
 
 
 def _annotate_primitives(
@@ -26,7 +26,7 @@ def _annotate_primitives(
     """
     df = _annotate_id(df, data_columns, show_runtime)
     df = _annotate_variable(df, data_columns, show_runtime)
-    with log_time("adding duration, length, min, max, avg, type, direction, slope annotation", show_runtime):
+    with _log_time("adding duration, length, min, max, avg, type, direction, slope annotation", show_runtime):
         df = _merged_annotations(df, data_columns, thresholds)
 
     return df
@@ -104,7 +104,7 @@ def _annotate_id(
     Returns:
     pd.DataFrame: The original dataframe with an added column named 'ID'.
     """
-    with log_time("adding ID annotation", show_runtime):
+    with _log_time("adding ID annotation", show_runtime):
         cols = [f"Segment_{v}" for v in data_columns.values()]
         arr = df[cols].to_numpy()
         segment_id = _compute_segment_id(arr)
@@ -130,7 +130,7 @@ def _annotate_variable(
     Returns:
     pd.DataFrame: The original dataframe with an added column named 'Variable'.
     """
-    with log_time("adding variable annotation", show_runtime):
+    with _log_time("adding variable annotation", show_runtime):
         cols = [f"Segment_{v}" for v in data_columns.values()]
         short_names = list(data_columns.keys())
         data = df[cols].to_numpy()

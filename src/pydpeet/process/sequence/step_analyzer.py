@@ -9,7 +9,7 @@ from pydpeet.process.sequence.utils.annotate.annotate_primitives import (
     _merged_annotations,
 )
 from pydpeet.process.sequence.utils.configs.CONFIG_Fallback import FALLBACK_CONFIG
-from pydpeet.process.sequence.utils.console_prints.log_time import log_time
+from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
 from pydpeet.process.sequence.utils.postprocessing.df_primitives_correction import df_primitives_correction
 from pydpeet.process.sequence.utils.processing.analyze_segments import _analyze_segments
 from pydpeet.process.sequence.utils.processing.attempt_to_merge_neighboring_segments import (
@@ -207,7 +207,7 @@ def add_primitive_segments(
 
     if PRECOMPILE:
         if len(df_step) > 100_000 or FORCE_PRECOMPILATION:
-            with log_time(
+            with _log_time(
                 "precompiling step_analyzer_primitives and df_primitives_correction", SHOW_RUNTIME=SHOW_RUNTIME
             ):
                 _precompile_step_analyzer()
@@ -220,11 +220,11 @@ def add_primitive_segments(
     if SHOW_RUNTIME:
         logger.info(f"detecting segments in dataframe of size {len(df_step)}...")
 
-    with log_time("calculating Power[W]", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("calculating Power[W]", SHOW_RUNTIME=SHOW_RUNTIME):
         df_step["Power[W]"] = df_step["Voltage[V]"] * df_step["Current[A]"]
 
     for column_name, threshold in SEGMENTS_TO_DETECT_CONFIG:
-        with log_time(
+        with _log_time(
             f"separating {column_name} into segments using incremental linear fit", SHOW_RUNTIME=SHOW_RUNTIME
         ):
             df_step = _split_in_segments_using_incremental_linear_fit(
@@ -234,17 +234,17 @@ def add_primitive_segments(
     keep_max_segment_id_config = []
     for _, col_name in DATA_COLUMNS.items():
         segment_col = f"Segment_{col_name}"
-        with log_time(f"adding Length_{segment_col} to calculate the dominating segments", SHOW_RUNTIME=SHOW_RUNTIME):
+        with _log_time(f"adding Length_{segment_col} to calculate the dominating segments", SHOW_RUNTIME=SHOW_RUNTIME):
             df_step = _add_segment_lengths(df=df_step, column_name=col_name)
         keep_max_segment_id_config.append((f"Length_{segment_col}", segment_col))
 
-    with log_time("suppressing smaller segments", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("suppressing smaller segments", SHOW_RUNTIME=SHOW_RUNTIME):
         df_step = _keep_max_segment_id(df=df_step, keep_max_segment_id_config=keep_max_segment_id_config)
 
-    with log_time("attempting to merge neighboring segments", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("attempting to merge neighboring segments", SHOW_RUNTIME=SHOW_RUNTIME):
         df_step = _attempt_to_merge_neighboring_segments(df=df_step, adjust_segments_config=ADJUST_SEGMENTS_CONFIG)
 
-    with log_time("fine tuning width of constant segments to better fit the data", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("fine tuning width of constant segments to better fit the data", SHOW_RUNTIME=SHOW_RUNTIME):
         df_step = _widen_constant_segments(
             df=df_step,
             adjust_segments_config=ADJUST_SEGMENTS_CONFIG,
@@ -259,7 +259,7 @@ def add_primitive_segments(
         df_step, data_columns=DATA_COLUMNS, thresholds=THRESHOLDS_PRIMITIVE_ANNOTATION, show_runtime=SHOW_RUNTIME
     )
 
-    with log_time("dropping temporary length and segment columns", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("dropping temporary length and segment columns", SHOW_RUNTIME=SHOW_RUNTIME):
         columns_to_drop = [f"Length_Segment_{v}" for v in DATA_COLUMNS.values()] + [
             f"Segment_{v}" for v in DATA_COLUMNS.values()
         ]
@@ -306,7 +306,7 @@ def add_primitive_segments(
         )
 
     if check_CV_0Aend_segments_bool or check_zero_length_segments_bool or check_Power_zero_W_segments_bool:
-        with log_time("updating annotations", SHOW_RUNTIME=SHOW_RUNTIME):
+        with _log_time("updating annotations", SHOW_RUNTIME=SHOW_RUNTIME):
             df_primitives = _merged_annotations(
                 df=df_primitives, data_columns=DATA_COLUMNS, thresholds=THRESHOLDS_PRIMITIVE_ANNOTATION
             )
@@ -385,7 +385,7 @@ def extract_sequence_overview(
 
     if SHOW_RUNTIME:
         logger.info("analyzing segments...")
-    with log_time("filtering by ID", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("filtering by ID", SHOW_RUNTIME=SHOW_RUNTIME):
         df_ID_filtered = df_primitives.loc[df_primitives.groupby("ID")["ID"].idxmin()]
 
     # Not with log_time() since it's handled internally

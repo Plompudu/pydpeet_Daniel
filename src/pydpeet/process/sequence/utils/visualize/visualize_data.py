@@ -5,7 +5,7 @@ from typing import Optional
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from pydpeet.process.sequence.utils.console_prints.log_time import log_time
+from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
 from pydpeet.utils.guardrails import _guardrail_boolean, _guardrail_dataframe
 
 # -------------------------------------------------------------------
@@ -74,7 +74,7 @@ def _visualize_phases(
         width_height_ratio = [1.0, 0.3]
 
     # 1) Filter by time
-    with log_time("filtering by time", show_runtime):
+    with _log_time("filtering by time", show_runtime):
         mask = pd.Series(True, index=dataframe.index)
         if start_time is not None:
             mask &= dataframe["Test_Time[s]"] >= start_time
@@ -83,19 +83,19 @@ def _visualize_phases(
         df = dataframe.loc[mask]
 
     # 2) Normalize line colors and y-axis ranges
-    with log_time("normalizing colors and y-axis ranges", show_runtime):
+    with _log_time("normalizing colors and y-axis ranges", show_runtime):
         line_colors = line_colors or {}
         y_axis_ranges = y_axis_ranges or {}
 
     # 3) Map segment colors to `Variable` values
-    with log_time("mapping segment colors", show_runtime):
+    with _log_time("mapping segment colors", show_runtime):
         if segment_id_cols is None or segment_colors is None:
             segment_colors = {}
         else:
             segment_colors = {var: col for var, col in zip(segment_id_cols, segment_colors, strict=False)}
 
     # 4) Set up figure
-    with log_time("setting up figure", show_runtime):
+    with _log_time("setting up figure", show_runtime):
         screen_w, screen_h = _SCREEN_DIMS
         dpi = plt.rcParams["figure.dpi"]
         fig_w, fig_h = (screen_w * width_height_ratio[0]) / dpi, (screen_h * width_height_ratio[1]) / dpi
@@ -126,21 +126,21 @@ def _visualize_phases(
             fig.subplots_adjust(right=1 + offset + 0.05)
 
     # 5) Plot data
-    with log_time("plotting data", show_runtime):
+    with _log_time("plotting data", show_runtime):
         t = df["Test_Time[s]"]
         for col in columns_to_visualize:
             if col in df.columns:
                 axes[col].plot(t, df[col], label=col, color=line_colors.get(col))
 
     # 6) Group segments by ID + Variable
-    with log_time("grouping segments by ID + Variable", show_runtime):
+    with _log_time("grouping segments by ID + Variable", show_runtime):
         stats = df.groupby(["ID", "Variable"])["Test_Time[s]"].agg(tmin="min", tmax="max").reset_index()
 
     y0, y1 = ax_base.get_ylim()
     height = y1 - y0
 
     # 7) Draw segment backgrounds and labels
-    with log_time("drawing segment backgrounds and labels", show_runtime):
+    with _log_time("drawing segment backgrounds and labels", show_runtime):
         intervals = []
         colors = []
         vline_positions = []
@@ -186,7 +186,7 @@ def _visualize_phases(
             ax_base.text(x_center, mid_y, label, ha="center", va="center", rotation=90, size=10)
 
     # 8) Adding grid and legend
-    with log_time("adding grid and legend", show_runtime):
+    with _log_time("adding grid and legend", show_runtime):
         # TODO power labels multiple times shown fix?
         ax_base.set_xlabel("Testtime [s]")
         legend_handles, legend_labels = [], []
