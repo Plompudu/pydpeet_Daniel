@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from pydpeet import BatteryConfig, SocMethod
+from pydpeet import BatteryConfig, BatteryConfigClass, SocMethod
 from pydpeet.process.sequence.utils.configs.CONFIG_Fallback import FALLBACK_CONFIG, SEGMENT_SEQUENCE_CONFIG
 
 # Get the directory where the current script is located
@@ -89,7 +89,7 @@ class Mocks:
         df = DF
         df_primitives = DF_PRIMITIVES
         neware_bool = True
-        config = BatteryConfig()
+        config = BatteryConfig.DEFAULT
         verbose = True
         required_columns_df = ["Voltage[V]", "Current[A]", "Test_Time[s]"]
         required_column_dtypes_df = [("Voltage[V]", float), ("Current[A]", float), ("Test_Time[s]", float)]
@@ -168,7 +168,7 @@ class Mocks:
 
     class Mock_add_resistance_internal:
         df = DF
-        config = BatteryConfig()
+        config = BatteryConfig.DEFAULT
         verbose = True
         required_columns = ["Voltage[V]", "Current[A]", "Test_Time[s]"]
         required_columns_dtypes = [("Voltage[V]", float), ("Current[A]", float), ("Test_Time[s]", float)]
@@ -181,7 +181,7 @@ class Mocks:
         neware_bool = True
         standard_method = SocMethod.WITHOUT_RESET
         methods = [SocMethod.WITHOUT_RESET, SocMethod.WITH_RESET_WHEN_FULL]
-        config = BatteryConfig()
+        config = BatteryConfig.DEFAULT
         lower_soc_for_voltage = 0.0
         upper_soc_for_voltage = 1.0
         lower_voltage_for_soc = 0.0
@@ -271,7 +271,7 @@ class Mocks:
         visualize = False
         df = DF_NEWARE.copy()
         df_primitives = DF_NEWARE_PRIMITIVES.copy()
-        config = BatteryConfig(c_ref=4.75, max_voltage=4.2, min_voltage=2.5, voltage_intervall=0.01)
+        config = BatteryConfigClass(c_ref=4.75, max_voltage=4.2, min_voltage=2.5, voltage_intervall=0.01)
         required_columns_df = ["Voltage[V]", "Current[A]", "Test_Time[s]"]
         required_columns_dtypes_df = [("Voltage[V]", float), ("Current[A]", float), ("Test_Time[s]", float)]
         required_columns_df_primitives = ["Test_Time[s]", "Type", "Duration", "ID", "Voltage[V]"]

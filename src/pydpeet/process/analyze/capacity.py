@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from scipy import integrate
 
-from pydpeet.process.analyze.configs.battery_config import BatteryConfig
+from pydpeet.process.analyze.configs.battery_config import BatteryConfigClass
 from pydpeet.process.analyze.configs.step_analyzer_config import SEGMENT_SEQUENCE_CONFIG
 from pydpeet.process.analyze.utils import (
     _StepTimer,
@@ -18,7 +18,7 @@ from pydpeet.utils.guardrails import _guardrail_boolean, _guardrail_dataframe
 def add_capacity(
     df: pd.DataFrame,
     df_primitives: pd.DataFrame,
-    config: BatteryConfig = None,
+    config: BatteryConfigClass = None,
     neware_bool: bool = True,
     verbose: bool = True,
 ) -> pd.DataFrame:

@@ -2,7 +2,7 @@ from pydpeet.process.sequence.configs import config
 from pydpeet.process.sequence.utils.preprocessing.calculate_thresholds import calculate_minimum_definitive_differences
 
 # using neware thresholds as default
-THRESHOLD_DICT = config.NEWARE_CT_4008Q_5V12A_S1
+THRESHOLD_DICT = config.DeviceConfig.NEWARE_CT_4008Q_5V12A_S1
 MIN_DEFINITIVE_VOLTAGE_DIFFERENCE, MIN_DEFINITIVE_CURRENT_DIFFERENCE = calculate_minimum_definitive_differences(
     *THRESHOLD_DICT
 )
