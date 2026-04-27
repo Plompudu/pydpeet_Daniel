@@ -127,44 +127,50 @@ def print_definitions(results: dict[str, dict], show_docstrings: bool = False) -
         functions = data["functions"]
         classes = data["classes"]
 
-        # Add standalone functions
-        for func in functions:
-            category = "PRIVATE" if func["name"].startswith("_") else "OPEN"
-
-            items.append(
-                {
-                    "Category": category,
-                    "Name": func["name"],
-                    "File": file_path,
-                    "Line": func["line"],
-                }
-            )
-
         # Add classes
         for cls in classes:
-            category = "PRIVATE" if cls["name"].startswith("_") else "OPEN"
+            is_private = cls["name"].startswith("_")
+            category = "PRIVATE" if is_private else "OPEN"
 
             # Add the class itself
             items.append(
                 {
                     "Category": category,
+                    "_type": "CLASS",
                     "Name": cls["name"],
                     "File": file_path,
                     "Line": cls["line"],
                 }
             )
 
-            # Add class methods
+            # Add class methods as functions
             for method_name in cls["methods"]:
-                method_category = "PRIVATE" if method_name.startswith("_") else "OPEN"
+                method_is_private = method_name.startswith("_")
+                method_category = "PRIVATE" if method_is_private else "OPEN"
                 items.append(
                     {
                         "Category": method_category,
+                        "_type": "FUNCT",
                         "Name": f"{cls['name']}.{method_name}",
                         "File": file_path,
                         "Line": cls["line"],  # Class line number (method lines not tracked)
                     }
                 )
+
+        # Add standalone functions
+        for func in functions:
+            is_private = func["name"].startswith("_")
+            category = "PRIVATE" if is_private else "OPEN"
+
+            items.append(
+                {
+                    "Category": category,
+                    "_type": "FUNCT",
+                    "Name": func["name"],
+                    "File": file_path,
+                    "Line": func["line"],
+                }
+            )
 
     # Create DataFrame
     df = pd.DataFrame(items)
@@ -173,8 +179,13 @@ def print_definitions(results: dict[str, dict], show_docstrings: bool = False) -
         print("No functions or classes found.")
         return
 
-    # Sort by Category, File, Line
-    df = df.sort_values(["Category", "File", "Line"]).reset_index(drop=True)
+    # Define custom sort order: OPEN CLASS, OPEN FUNCT, PRIVATE CLASS, PRIVATE FUNCT
+    category_order = {"OPEN": 0, "PRIVATE": 1}
+    type_order = {"CLASS": 0, "FUNCT": 1}
+    df["_sort_key"] = df["Category"].map(category_order) * 2 + df["_type"].map(type_order)
+
+    # Sort by sort key, then File, then Line
+    df = df.sort_values(["_sort_key", "File", "Line"]).drop(columns=["_sort_key", "_type"]).reset_index(drop=True)
 
     # Configure pandas to display all rows and columns
     pd.set_option("display.max_rows", None)

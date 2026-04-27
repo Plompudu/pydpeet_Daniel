@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-class ExtPath(Path):
+class _ExtPath(Path):
     @staticmethod
     def _is_not_valid(path: str | None) -> bool:
         """
@@ -13,7 +13,7 @@ class ExtPath(Path):
         Returns:
             bool: True if the path is not valid; False otherwise.
         """
-        return not ExtPath._is_valid(path)
+        return not _ExtPath._is_valid(path)
 
     @staticmethod
     def _is_valid(path: str | None) -> bool:

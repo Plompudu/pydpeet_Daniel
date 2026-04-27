@@ -19,7 +19,7 @@ from pydpeet.io.configs.config import (
 )
 from pydpeet.io.device.neware_8_0_0_516.reader import _find_main_files
 from pydpeet.io.map import mapping
-from pydpeet.io.utils.ext_path import ExtPath
+from pydpeet.io.utils.ext_path import _ExtPath
 from pydpeet.io.utils.load_custom_module import load_custom_module
 from pydpeet.io.utils.timing import _measure_time
 from pydpeet.io.write import write
@@ -106,9 +106,9 @@ def convert_file(
         config = ReadConfig._from_string(config)
     if ReadConfig._not_exists(config):
         raise ValueError("ReadConfig must be provided!")
-    if ExtPath._is_not_valid(input_path):
+    if _ExtPath._is_not_valid(input_path):
         raise ValueError("Input_path must be provided!")
-    if custom_folder_path is not None and ExtPath._is_not_valid(custom_folder_path):
+    if custom_folder_path is not None and _ExtPath._is_not_valid(custom_folder_path):
         raise ValueError("Custom_folder_path must be valid if provided!")
 
     df, meta_data = _convert_file_to_pandas_data_frame(config, input_path, custom_folder_path)
@@ -326,7 +326,7 @@ def _convert_file_to_pandas_data_frame(
     df = None
     meta_data = ""
     if config == ReadConfig.Custom:
-        if ExtPath._is_not_valid(custom_folder):
+        if _ExtPath._is_not_valid(custom_folder):
             raise ValueError(f"Custom folder path must be provided for {ReadConfig.Custom}!")
 
         custom_reader = load_custom_module(custom_folder, "Reader")
@@ -373,7 +373,7 @@ def _column_mapping(
         column_map, missing_required_columns = _MAPPER_CONFIGS[config]  # type: ignore[index]
         return mapping(df, column_map, missing_required_columns)
     elif config == ReadConfig.Custom:
-        if ExtPath._is_not_valid(custom_folder):
+        if _ExtPath._is_not_valid(custom_folder):
             raise ValueError(f"Custom folder path must be provided for {ReadConfig.Custom}!")
 
         custom_mapper = load_custom_module(custom_folder, "Mapper")
@@ -574,7 +574,7 @@ def _get_data_into_format(
         raise ValueError("ReadConfig is None.")
     if config not in _FORMATTER_CONFIGS and config != ReadConfig.Custom:
         raise ValueError(f"Unknown ReadConfig: {config}")
-    if ExtPath._is_not_valid(custom_folder) and config == ReadConfig.Custom:
+    if _ExtPath._is_not_valid(custom_folder) and config == ReadConfig.Custom:
         raise ValueError(f"Valid custom folder path must be provided for {ReadConfig.Custom}")
 
     if config == ReadConfig.Custom:
