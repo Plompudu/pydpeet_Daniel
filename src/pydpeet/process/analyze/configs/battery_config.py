@@ -2,8 +2,10 @@ from dataclasses import dataclass
 from typing import Optional
 
 
-@dataclass
-class BatteryConfig:
+# frozen=True prevents accidental modification of shared predefined config instances
+# use battery_config_default = BatteryConfig() to create a new instance
+@dataclass(frozen=True)
+class BatteryConfigClass:
     cell_name: str = "Default"
     c_ref: Optional[float] = None
     soc_start: float = 0
@@ -23,17 +25,19 @@ class BatteryConfig:
     ignore_negative_resistance_values: bool = False
 
 
-battery_config_default = BatteryConfig()
+# Container class for battery configurations
+class BatteryConfig:
+    DEFAULT = BatteryConfigClass()
 
-# Configs for different Cells
-lgm50lt_nmc_4800 = BatteryConfig(
-    c_ref=4.8,
-    max_voltage=4.2,
-    min_voltage=2.5,
-    min_current_diff=0.5,
-    max_time_diff=5,
-    min_voltage_diff=0.0001,
-    ignore_negative_resistance_values=True,
-)
+    # Configs for different Cells
+    LGM50LT_NMC_4800 = BatteryConfigClass(
+        c_ref=4.8,
+        max_voltage=4.2,
+        min_voltage=2.5,
+        min_current_diff=1,
+        max_time_diff=0.5,
+        min_voltage_diff=0,
+        ignore_negative_resistance_values=True,
+    )
 
-hakadi_nmc_1500 = BatteryConfig(c_ref=1.5, max_voltage=3.6, min_voltage=2.0)
+    HAKADI_NMC_1500 = BatteryConfigClass(c_ref=1.5, max_voltage=3.6, min_voltage=2.0)
