@@ -8,8 +8,8 @@ import pandas as pd
 
 from pydpeet.io.configs.config import ReadConfig
 from pydpeet.io.convert import (
-    convert_file,
-    convert_files_in_directory,
+    _convert_file,
+    _convert_files_in_directory,
 )
 from pydpeet.utils.guardrails import _guardrail_boolean
 
@@ -157,9 +157,9 @@ def read(
 
     if isinstance(input_path, str):
         if os.path.isfile(input_path):
-            return convert_file(config, input_path, None, keep_all_additional_data, custom_folder_path)
+            return _convert_file(config, input_path, None, keep_all_additional_data, custom_folder_path)
         elif os.path.isdir(input_path):
-            return convert_files_in_directory(config, input_path, None, keep_all_additional_data, custom_folder_path)
+            return _convert_files_in_directory(config, input_path, None, keep_all_additional_data, custom_folder_path)
         else:
             raise ValueError("Input path is invalid!")
     elif isinstance(input_path, list):
@@ -167,10 +167,10 @@ def read(
         for input_item in input_path:
             if isinstance(input_item, str):
                 if os.path.isfile(input_item):
-                    dfs.append(convert_file(config, input_item, None, keep_all_additional_data, custom_folder_path))
+                    dfs.append(_convert_file(config, input_item, None, keep_all_additional_data, custom_folder_path))
                 elif os.path.isdir(input_item):
                     dfs.append(
-                        convert_files_in_directory(
+                        _convert_files_in_directory(
                             config, input_item, None, keep_all_additional_data, custom_folder_path
                         )
                     )

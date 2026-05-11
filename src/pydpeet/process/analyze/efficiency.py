@@ -83,7 +83,7 @@ def add_efficiency_coulomb(
     df_mod["CoulombEfficiency"] = np.nan  # numeric NaN
 
     # Helper to summarize blocks safely
-    def summarize_blocks(blocks, total_col_name):
+    def _summarize_blocks(blocks, total_col_name):
         summary = []
         for block in blocks:
             if block.empty:
@@ -116,8 +116,8 @@ def add_efficiency_coulomb(
 
     # Helper to find matching blocks
     with _StepTimer(verbose) as st:
-        charge_df = summarize_blocks(df_blocks_charge, "total_charge")
-        discharge_df = summarize_blocks(df_blocks_discharge, "total_discharge")
+        charge_df = _summarize_blocks(df_blocks_charge, "total_charge")
+        discharge_df = _summarize_blocks(df_blocks_discharge, "total_discharge")
         st._log("summarized all charge/discharge blocks")
 
     if charge_df.empty or discharge_df.empty:

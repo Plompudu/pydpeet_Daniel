@@ -41,9 +41,9 @@ def convert(
 
     if isinstance(input_path, str):
         if os.path.isfile(input_path):
-            return convert_file(config, input_path, output_path, keep_all_additional_data, custom_folder_path)
+            return _convert_file(config, input_path, output_path, keep_all_additional_data, custom_folder_path)
         elif os.path.isdir(input_path):
-            return convert_files_in_directory(
+            return _convert_files_in_directory(
                 config, input_path, output_path, keep_all_additional_data, custom_folder_path
             )
         else:
@@ -54,11 +54,11 @@ def convert(
             if isinstance(input_item, str):
                 if os.path.isfile(input_item):
                     dfs.append(
-                        convert_file(config, input_item, output_path, keep_all_additional_data, custom_folder_path)
+                        _convert_file(config, input_item, output_path, keep_all_additional_data, custom_folder_path)
                     )
                 elif os.path.isdir(input_item):
                     dfs.append(
-                        convert_files_in_directory(
+                        _convert_files_in_directory(
                             config, input_item, output_path, keep_all_additional_data, custom_folder_path
                         )
                     )
@@ -73,7 +73,7 @@ def convert(
 
 # TODO: Add output path functionality
 @_measure_time
-def convert_file(
+def _convert_file(
     config: ConfigLike,
     input_path: str,
     output_path: Optional[str] = None,
@@ -124,7 +124,7 @@ def convert_file(
 
 # TODO: Implement better way of handling case where output_path is None?
 @_measure_time
-def convert_files_in_directory(
+def _convert_files_in_directory(
     config: ReadConfig,
     input_path: str,
     output_path: Optional[str] = None,
@@ -240,7 +240,7 @@ def _process_file(
     """
     logging.info(f"Processing file: {filename}")
     try:
-        df = convert_file(config, file_path, keep_all_additional_data, custom_folder_path)
+        df = _convert_file(config, file_path, keep_all_additional_data, custom_folder_path)
         output_filename = f"{os.path.splitext(filename)[0]}_{config_name}_{current_date}"
         logging.info(f"Successfully processed: {output_filename}")
         return df
@@ -287,7 +287,7 @@ def _process_file_and_export(
     """
     logging.info(f"Processing file: {filename}")
     try:
-        df = convert_file(config, file_path, keep_all_additional_data, custom_folder_path)
+        df = _convert_file(config, file_path, keep_all_additional_data, custom_folder_path)
         output_filename = f"{os.path.splitext(filename)[0]}_{config_name}_{current_date}"
         write(df, output_path, output_filename, data_output_filetype)
         logging.info(f"Successfully processed and exported: {output_filename}")

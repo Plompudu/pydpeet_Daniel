@@ -144,7 +144,7 @@ def generate_instructions(
         end_condition = end_condition_map.get(base_type.replace("Ramp", ""), "time")
 
         # TODO: Docstring
-        def build_instruction(
+        def _build_instruction(
             action: str,
             value_str: str,
             current: float = current,
@@ -169,32 +169,32 @@ def generate_instructions(
                 logging.warning(f"{base_type} segment (ID: {row['ID']}) replaced by CC with Average Current")
                 too_many_warnings += 1
             if direction == "Charge" or (direction is None and current > 0):
-                instructions.append(build_instruction("Charge", f"{abs(current):.3f}A"))
+                instructions.append(_build_instruction("Charge", f"{abs(current):.3f}A"))
             elif direction == "Discharge" or (direction is None and current < 0):
-                instructions.append(build_instruction("Discharge", f"{abs(current):.3f}A"))
+                instructions.append(_build_instruction("Discharge", f"{abs(current):.3f}A"))
 
         # Standard CC (non-ramp current)
         elif base_type == "CC":
             if direction == "Charge" or (direction is None and current > 0):
-                instructions.append(build_instruction("Charge", f"{abs(current):.3f}A"))
+                instructions.append(_build_instruction("Charge", f"{abs(current):.3f}A"))
             elif direction == "Discharge" or (direction is None and current < 0):
-                instructions.append(build_instruction("Discharge", f"{abs(current):.3f}A"))
+                instructions.append(_build_instruction("Discharge", f"{abs(current):.3f}A"))
 
         # Constant voltage (CV)
         elif base_type == "CV":
             voltage = row["End_Value_Voltage[V]"]
             if direction == "Charge" or (direction is None and current > 0):
-                instructions.append(build_instruction("Hold", f"{abs(voltage):.3f}V"))
+                instructions.append(_build_instruction("Hold", f"{abs(voltage):.3f}V"))
             elif direction == "Discharge" or (direction is None and current < 0):
-                instructions.append(build_instruction("Hold", f"{abs(voltage):.3f}V"))
+                instructions.append(_build_instruction("Hold", f"{abs(voltage):.3f}V"))
 
         # Constant power (CP)
         elif base_type == "CP":
             power = row["End_Value_Power[W]"]
             if direction == "Charge" or (direction is None and power > 0):
-                instructions.append(build_instruction("Charge", f"{abs(power):.2f}W"))
+                instructions.append(_build_instruction("Charge", f"{abs(power):.2f}W"))
             elif direction == "Discharge" or (direction is None and power < 0):
-                instructions.append(build_instruction("Discharge", f"{abs(power):.2f}W"))
+                instructions.append(_build_instruction("Discharge", f"{abs(power):.2f}W"))
 
         # Pause/Rest
         elif base_type == "Pause":

@@ -454,7 +454,7 @@ class PrimitiveConfig:
     Attributes:
         DEFAULT
         FALLBACK
-        PREPROCESSING
+        _PREPROCESSING
         _PRECOMPILE (internal use)
     """
 
@@ -474,7 +474,7 @@ class PrimitiveConfig:
     )
 
     # Preprocessing configuration with enhanced runtime settings
-    PREPROCESSING = primitive_config_wrapper(
+    _PREPROCESSING = primitive_config_wrapper(
         show_runtime=True,
         show_runtime_annotation=True,
         show_runtime_analyze=True,
