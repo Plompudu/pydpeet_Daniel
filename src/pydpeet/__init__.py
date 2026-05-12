@@ -63,24 +63,23 @@ __all__ = [
     "DeviceConfig",
     "PrimitiveConfig",
     "primitive_config_wrapper",
+    "add_primitive_segments",
     "calculate_minimum_definitive_differences",
-    "convert",
+    "VisualizationConfig",
+    "visualization_config_wrapper",
+    "visualize_phases",
     # Tutorial 03
     "SequenceOverviewConfig",
     "sequence_overview_config_wrapper",
     "df_primitives_correction",
     "extract_sequence_overview",
     # Tutorial 04
-    "VisualizationConfig",
-    "visualization_config_wrapper",
-    "visualize_phases",
-    # Tutorial 05
     "BatteryConfig",
     "battery_config_wrapper",
-    # Tutorial 06
+    # Tutorial 05
     "extract_ocv_iocv",
     "compute_ocv_dva_ica",
-    # Tutorial 07
+    # Tutorial 06
     "SocMethod",
     "add_capacity",
     "add_charge_throughput",
@@ -88,11 +87,10 @@ __all__ = [
     "add_efficiency_coulomb",
     "add_equivalent_full_cycles",
     "add_power",
-    "add_primitive_segments",
     "add_resistance_internal",
     "add_soc",
     "add_soh",
-    # Tutorial 08
+    # Tutorial 07
     "filter_and_split_df_by_blocks",
     "filter_df",
     "generate_instructions",
@@ -100,4 +98,6 @@ __all__ = [
     "split_df_by_blocks",
     # TODO was ist das / wofür braucht man das?
     "merge_into_campaign",
-]
+
+    # TODO diskutieren ob wir es überhaupt brauchen, da read
+    "convert",]
