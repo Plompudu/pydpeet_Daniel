@@ -14,7 +14,7 @@ def to_dataframe(input_path: str) -> tuple[pd.DataFrame, str]:
     metadata = []
 
     # Open the file and process lines
-    with open(input_path, encoding="us-ascii") as file:
+    with open(input_path, encoding="utf-8") as file:
         # Read metadata until the header line is found
         line = file.readline()
         while not line.startswith("Zeitstempel"):
