@@ -6,7 +6,7 @@ from pydpeet.io.configs.config import _STANDARD_COLUMNS
 from pydpeet.utils.guardrails import _guardrail_dataframe
 
 
-def mapping(
+def _mapping(
     data_frame: pd.DataFrame,
     column_map: dict,
     missing_columns: list,

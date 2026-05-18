@@ -384,7 +384,7 @@ def print_references():
 
         Output:
 
-            @article{Daniel_BA,
+            @article{Example,
               title = {Example},
               author = {Example, Example},
               year = {2026},

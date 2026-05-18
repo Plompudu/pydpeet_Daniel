@@ -18,7 +18,7 @@ from pydpeet.process.sequence.step_analyzer import (
 )
 
 
-def compute_ocv_dva_ica(
+def extract_ocv_dva_ica(
     df_primitives: pd.DataFrame = None,
     df: pd.DataFrame = None,
     min_pause_lenght: float = 120.0,

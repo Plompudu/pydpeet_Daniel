@@ -18,7 +18,7 @@ from pydpeet.io.configs.config import (
     ReadConfig,
 )
 from pydpeet.io.device.neware_8_0_0_516.reader import _find_main_files
-from pydpeet.io.map import mapping
+from pydpeet.io.map import _mapping
 from pydpeet.io.utils.ext_path import _ExtPath
 from pydpeet.io.utils.load_custom_module import load_custom_module
 from pydpeet.io.utils.timing import _measure_time
@@ -371,7 +371,7 @@ def _column_mapping(
 
     if config in _MAPPER_CONFIGS:
         column_map, missing_required_columns = _MAPPER_CONFIGS[config]  # type: ignore[index]
-        return mapping(df, column_map, missing_required_columns)
+        return _mapping(df, column_map, missing_required_columns)
     elif config == ReadConfig.Custom:
         if _ExtPath._is_not_valid(custom_folder):
             raise ValueError(f"Custom folder path must be provided for {ReadConfig.Custom}!")
@@ -383,7 +383,7 @@ def _column_mapping(
         if custom_mapper.MISSING_REQUIRED_COLUMNS is None:
             raise ValueError("MISSING_REQUIRED_COLUMNS in custom mapper is None.")
 
-        return mapping(df, custom_mapper.COLUMN_MAP, custom_mapper.MISSING_REQUIRED_COLUMNS)
+        return _mapping(df, custom_mapper.COLUMN_MAP, custom_mapper.MISSING_REQUIRED_COLUMNS)
 
 
 def _drop_additional_data(df: pd.DataFrame) -> pd.DataFrame:

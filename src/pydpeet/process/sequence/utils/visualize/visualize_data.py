@@ -203,14 +203,14 @@ def _visualize_phases(
 
 
 def visualize_phases(
-    dataframe: pd.DataFrame,
+    df: pd.DataFrame,
     config: _VisualizationConfigClass,
 ) -> None:
     """
     Visualizes the given dataframe by plotting all columns over time.
 
     Parameters:
-        dataframe (pd.DataFrame): The dataframe to be visualized.
+        df (pd.DataFrame): The dataframe to be visualized.
         config (_VisualizationConfigClass): Configuration object containing visualization parameters.
             Use VisualizationConfig.DEFAULT, VisualizationConfig.OCV, or create custom config via visualization_config_wrapper().
 
@@ -242,7 +242,7 @@ def visualize_phases(
     required_columns = [col for col, _ in required_column_dtypes]
 
     _guardrail_dataframe(
-        dataframe,
+        df,
         hard_fail_missing_required_columns=(True, required_columns),
         hard_fail_wrong_column_dtypes=(True, required_column_dtypes),
         hard_fail_inf_values=(False, required_columns),
@@ -254,15 +254,15 @@ def visualize_phases(
     for boolean_param in [use_lines_for_segments, show_column_names, show_time, show_id, show_runtime]:
         _guardrail_boolean(boolean_param, hard_fail_none=True, hard_fail_wrong_type=True)
 
-    if dataframe is None:
+    if df is None:
         raise ValueError("dataframe is None")
-    if not isinstance(dataframe, pd.DataFrame):
+    if not isinstance(df, pd.DataFrame):
         raise TypeError("dataframe must be a pandas DataFrame")
     if not (isinstance(width_height_ratio, list | tuple) and len(width_height_ratio) == 2):
         raise ValueError("width_height_ratio must be a list or tuple of length 2")
-    if "Test_Time[s]" not in dataframe.columns:
+    if "Test_Time[s]" not in df.columns:
         raise ValueError("dataframe needs to have at least column 'Test_Time[s]'")
-    if "ID" not in dataframe.columns:
+    if "ID" not in df.columns:
         raise ValueError("dataframe needs to have at least column 'ID'")
     if not isinstance(visualize_phases_config, list):
         raise TypeError("visualize_phases_config must be a list")
@@ -290,7 +290,7 @@ def visualize_phases(
         raise TypeError("columns_to_visualize must be a list")
 
     _visualize_phases(
-        dataframe=dataframe,
+        dataframe=df,
         start_time=start_time,
         end_time=end_time,
         segment_id_cols=segment_id_cols,

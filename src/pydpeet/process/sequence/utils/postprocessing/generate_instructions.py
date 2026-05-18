@@ -93,7 +93,7 @@ def _get_important_entries_per_segment(
     return dataframe_records
 
 
-def generate_instructions(
+def extract_instructions(
     df_primitives: pd.DataFrame,
     end_condition_map: Optional[dict] = None,
     threshold_warnings: int = 5,
