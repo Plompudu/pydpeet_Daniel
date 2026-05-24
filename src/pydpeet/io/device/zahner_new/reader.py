@@ -17,9 +17,12 @@ def to_dataframe(input_path: str) -> tuple[pd.DataFrame, str]:
     with open(input_path, encoding="us-ascii") as file:
         # Read metadata until a data header line is detected
         line = file.readline()
-        while not (line.strip().startswith("time") or line.strip().startswith("Number")):
+        while line and not (line.strip().startswith("time") or line.strip().startswith("Number")):
             metadata.append(line.strip())
             line = file.readline()
+
+        if not line:
+            raise ValueError(f"Header line starting with 'time' or 'Number' not found in {input_path}")
 
         # Detect delimiter and process the header
         if ";" in line:

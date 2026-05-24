@@ -17,9 +17,12 @@ def to_dataframe(input_path: str) -> tuple[pd.DataFrame, str]:
     with open(input_path, encoding="iso-8859-1") as file:
         # Read metadata until the header line is found
         line = file.readline()
-        while not line.startswith("Zeitstempel"):
+        while line and not line.startswith("Zeitstempel"):
             metadata.append(line.strip())
             line = file.readline()
+
+        if not line:
+            raise ValueError(f"Header line starting with 'Zeitstempel' not found in {input_path}")
 
         # Extract headers and remaining data
         headers = line.strip().split(",")
