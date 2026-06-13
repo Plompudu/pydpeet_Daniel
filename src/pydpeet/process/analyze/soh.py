@@ -44,7 +44,9 @@ def add_soh(
             if df_primitives is None:
                 logging.info("df_primitives is None, please provide a valid df_primitives for add_capacity function")
             else:
-                df_mod = add_capacity(df_mod, neware_bool, df_primitives, config, verbose=verbose)
+                df_mod = add_capacity(
+                    df=df_mod, df_primitives=df_primitives, config=config, neware_bool=neware_bool, verbose=verbose
+                )
                 st._log("added capacity column to df")
                 first_valid_idx = df_mod["Capacity[Ah]"].first_valid_index()
                 if first_valid_idx is None:

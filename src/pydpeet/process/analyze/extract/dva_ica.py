@@ -6,8 +6,9 @@ import pandas as pd
 from scipy import integrate
 from scipy.signal import savgol_filter
 
+from pydpeet.process.analyze.configs.battery_config import battery_config_wrapper
 from pydpeet.process.analyze.extract.ocv import extract_ocv_iocv
-from pydpeet.process.analyze.soc import add_soc
+from pydpeet.process.analyze.soc import SocMethod, add_soc
 from pydpeet.process.sequence.configs.config import (
     PrimitiveConfig,
     SequenceOverviewConfig,
@@ -91,12 +92,15 @@ def extract_ocv_dva_ica(
             logging.info("SOC already exists in df_primitives, skipping SOC calculation...")
         else:
             logging.info("SOC column does not exist in df_primitives, adding it...")
+
+            config = battery_config_wrapper(c_ref=soc_c_ref, max_voltage=soc_max_voltage, min_voltage=soc_min_voltage)
             df_primitives = add_soc(
-                df_primitives,
-                method="withResetWhenFullAndEmpty",
-                max_Voltage=soc_max_voltage,
-                min_Voltage=soc_min_voltage,
-                C_ref=soc_c_ref,
+                df=df_primitives,
+                df_primitives=df_primitives,
+                standard_method=SocMethod.WITH_RESET_WHEN_FULL_AND_EMPTY,
+                config=config,
+                upper_voltage_for_soc=soc_max_voltage,
+                lower_voltage_for_soc=soc_min_voltage,
             )
 
         df_segments_and_sequences = extract_sequence_overview(df_primitives, config=SequenceOverviewConfig.OCV)

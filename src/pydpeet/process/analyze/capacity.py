@@ -30,7 +30,7 @@ def add_capacity(
     are searched. For each of these blocks, the cumulative capacity is computed by
     integrating the absolute current over time.
 
-    The resulting DataFrame has an additional 'Capacity[Ah]' column.
+    The resulting DataFrame has an additional 'Capacity[Ah]' column with datapoints in rows where the capacity was computed.
 
     Parameters:
         df (pandas.DataFrame): Input DataFrame containing battery test data
