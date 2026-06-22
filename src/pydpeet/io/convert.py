@@ -21,9 +21,9 @@ from pydpeet.io.device.neware_8_0_0_516.reader import _find_main_files
 from pydpeet.io.map import _mapping
 from pydpeet.io.utils.ext_path import _ExtPath
 from pydpeet.io.utils.load_custom_module import load_custom_module
-from pydpeet.io.utils.timing import _measure_time
 from pydpeet.io.write import write
 from pydpeet.utils.guardrails import _guardrail_boolean
+from pydpeet.utils.log_time import _log_time
 
 ConfigLike: TypeAlias = ReadConfig | str
 PathLike: TypeAlias = str | Path
@@ -72,7 +72,6 @@ def convert(
 
 
 # TODO: Add output path functionality
-@_measure_time
 def _convert_file(
     config: ConfigLike,
     input_path: str,
@@ -102,28 +101,28 @@ def _convert_file(
     DataFrame
         The standardized DataFrame.
     """
-    if isinstance(config, str):
-        config = ReadConfig._from_string(config)
-    if ReadConfig._not_exists(config):
-        raise ValueError("ReadConfig must be provided!")
-    if _ExtPath._is_not_valid(input_path):
-        raise ValueError("Input_path must be provided!")
-    if custom_folder_path is not None and _ExtPath._is_not_valid(custom_folder_path):
-        raise ValueError("Custom_folder_path must be valid if provided!")
+    with _log_time("_convert_file", True):
+        if isinstance(config, str):
+            config = ReadConfig._from_string(config)
+        if ReadConfig._not_exists(config):
+            raise ValueError("ReadConfig must be provided!")
+        if _ExtPath._is_not_valid(input_path):
+            raise ValueError("Input_path must be provided!")
+        if custom_folder_path is not None and _ExtPath._is_not_valid(custom_folder_path):
+            raise ValueError("Custom_folder_path must be valid if provided!")
 
-    df, meta_data = _convert_file_to_pandas_data_frame(config, input_path, custom_folder_path)
-    df = _column_mapping(df, config, custom_folder_path)
-    if not keep_all_additional_data:
-        df = _drop_additional_data(df)
-    df = _add_metadata_to_dataframe(df, meta_data)
-    df = _reorder_columns(df)
-    df = _get_data_into_format(df, config, custom_folder_path)
+        df, meta_data = _convert_file_to_pandas_data_frame(config, input_path, custom_folder_path)
+        df = _column_mapping(df, config, custom_folder_path)
+        if not keep_all_additional_data:
+            df = _drop_additional_data(df)
+        df = _add_metadata_to_dataframe(df, meta_data)
+        df = _reorder_columns(df)
+        df = _get_data_into_format(df, config, custom_folder_path)
 
-    return df
+        return df
 
 
 # TODO: Implement better way of handling case where output_path is None?
-@_measure_time
 def _convert_files_in_directory(
     config: ReadConfig,
     input_path: str,
@@ -150,58 +149,59 @@ def _convert_files_in_directory(
         The path to the directory containing the custom reader, mapper, and
         formatter reference for the given configuration.
     """
-    if config is None:
-        raise ValueError("ReadConfig must be provided!")
-    if input_path is None:
-        raise ValueError("Input_path must be provided!")
-    # if output_path is None:
-    #     raise ValueError("output_path must be provided")
-    if not isinstance(keep_all_additional_data, bool):
-        raise ValueError("Keep_all_additional_data must be a boolean if provided!")
-    if custom_folder_path is not None and custom_folder_path is not str:
-        raise ValueError("Custom_folder_path must be a string if provided!")
+    with _log_time("_convert_files_in_directory", True):
+        if config is None:
+            raise ValueError("ReadConfig must be provided!")
+        if input_path is None:
+            raise ValueError("Input_path must be provided!")
+        # if output_path is None:
+        #     raise ValueError("output_path must be provided")
+        if not isinstance(keep_all_additional_data, bool):
+            raise ValueError("Keep_all_additional_data must be a boolean if provided!")
+        if custom_folder_path is not None and custom_folder_path is not str:
+            raise ValueError("Custom_folder_path must be a string if provided!")
 
-    current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-    if type(config) is str:
-        config_name = config
-    else:
-        config_name = config.name
+        if type(config) is str:
+            config_name = config
+        else:
+            config_name = config.name
 
-    if config == ReadConfig.Neware_8_0_0_516:
-        files = _find_main_files(input_path)
-    else:
-        files = os.listdir(input_path)
+        if config == ReadConfig.Neware_8_0_0_516:
+            files = _find_main_files(input_path)
+        else:
+            files = os.listdir(input_path)
 
-    if output_path is None:
-        dfs = []
-        for filename in files:
-            df = _process_file(
-                config,
-                config_name,
-                current_date,
-                custom_folder_path,
-                os.path.join(input_path, filename),
-                filename,
-                keep_all_additional_data,
-            )
-            dfs.append(df)
-        return dfs
-    else:
-        os.makedirs(output_path, exist_ok=True)
-        for filename in files:
-            _process_file_and_export(
-                config,
-                config_name,
-                current_date,
-                custom_folder_path,
-                DataOutputFiletype.parquet,
-                os.path.join(input_path, filename),
-                filename,
-                keep_all_additional_data,
-                output_path,
-            )
-        return None
+        if output_path is None:
+            dfs = []
+            for filename in files:
+                df = _process_file(
+                    config,
+                    config_name,
+                    current_date,
+                    custom_folder_path,
+                    os.path.join(input_path, filename),
+                    filename,
+                    keep_all_additional_data,
+                )
+                dfs.append(df)
+            return dfs
+        else:
+            os.makedirs(output_path, exist_ok=True)
+            for filename in files:
+                _process_file_and_export(
+                    config,
+                    config_name,
+                    current_date,
+                    custom_folder_path,
+                    DataOutputFiletype.parquet,
+                    os.path.join(input_path, filename),
+                    filename,
+                    keep_all_additional_data,
+                    output_path,
+                )
+            return None
 
 
 def _process_file(
@@ -240,7 +240,9 @@ def _process_file(
     """
     logging.info(f"Processing file: {filename}")
     try:
-        df = _convert_file(config, file_path, keep_all_additional_data, custom_folder_path)
+        df = _convert_file(
+            config, file_path, keep_all_additional_data=keep_all_additional_data, custom_folder_path=custom_folder_path
+        )
         output_filename = f"{os.path.splitext(filename)[0]}_{config_name}_{current_date}"
         logging.info(f"Successfully processed: {output_filename}")
         return df
@@ -287,7 +289,9 @@ def _process_file_and_export(
     """
     logging.info(f"Processing file: {filename}")
     try:
-        df = _convert_file(config, file_path, keep_all_additional_data, custom_folder_path)
+        df = _convert_file(
+            config, file_path, keep_all_additional_data=keep_all_additional_data, custom_folder_path=custom_folder_path
+        )
         output_filename = f"{os.path.splitext(filename)[0]}_{config_name}_{current_date}"
         write(df, output_path, output_filename, data_output_filetype)
         logging.info(f"Successfully processed and exported: {output_filename}")
