@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 from numba import njit
 
-from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
 from pydpeet.process.sequence.utils.postprocessing.df_primitives_correction import df_primitives_correction
+from pydpeet.utils.log_time import _log_time
 
 
 @njit(cache=True)
@@ -143,7 +143,7 @@ def _check_CV_0Aend_segments(
     pd.DataFrame: Dataframe with added columns for annotated primitives
     """
 
-    with _log_time("checking CV Segments that end with 0A", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("checking CV Segments that end with 0A", SHOW_RUNTIME):
         # convert once to numpy
         times = df_primitives["Test_Time[s]"].to_numpy(np.float64)
         currents = df_primitives["Current[A]"].to_numpy(np.float64)
@@ -177,7 +177,7 @@ def _check_CV_0Aend_segments(
 
             expanded_ranges[id_val] = (float(seg_min), float(seg_max))
 
-    with _log_time("correcting CV Segments that end with 0A", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("correcting CV Segments that end with 0A", SHOW_RUNTIME):
         correction_config = {
             "replace_time_and_merge": {(start, end): "I" for _, (start, end) in expanded_ranges.items()},
         }

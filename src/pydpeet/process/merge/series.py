@@ -150,7 +150,7 @@ def merge_into_series(
                 for column in datetime_cols:
                     other_storage[column].append(pd.NaT)
                 for column in object_cols:
-                    other_storage[column].append(pd.NA)
+                    other_storage[column].append(None)
 
                 if verbose:
                     st._log(f"Added pause row after DataFrame {i} at {pause_value}s")

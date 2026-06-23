@@ -1,6 +1,6 @@
 import pandas as pd
 
-from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
+from pydpeet.utils.log_time import _log_time
 
 
 def _match_rules(
@@ -364,5 +364,6 @@ def _analyze_segments(
     with _log_time("separate sequences and df_with_segments", SHOW_RUNTIME):
         segment_keys = [key for key in SEGMENT_SEQUENCE_CONFIG.keys() if key in df.columns]
         df_segments_and_sequences = df[["ID", "Sequence"] + segment_keys]
+        df_segments_and_sequences["Sequence"] = df_segments_and_sequences["Sequence"].astype("str")
 
     return df_segments_and_sequences

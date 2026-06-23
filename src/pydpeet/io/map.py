@@ -60,7 +60,9 @@ def _mapping(
     # Add missing columns with None values if they do not exist, and issue warnings
     for missing in missing_columns:
         if missing not in df_copy.columns:
-            logging.warning(f"Missing column: '{missing}'. Adding Collumn (with None values) named: '{missing}'.")
+            logging.warning(
+                f"Missing column: '{missing}'. Adding Collumn (with None values) named: '{missing}' and dtype object."
+            )
             df_copy[missing] = None
 
     # Warn if a column that should be mapped is missing and add it with None values

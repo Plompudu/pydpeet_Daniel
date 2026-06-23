@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from numba import njit
 
-from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
+from pydpeet.utils.log_time import _log_time
 
 
 def _annotate_primitives(

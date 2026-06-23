@@ -3,8 +3,8 @@ import logging
 import numpy as np
 import pandas as pd
 
-from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
 from pydpeet.process.sequence.utils.postprocessing.df_primitives_correction import df_primitives_correction
+from pydpeet.utils.log_time import _log_time
 
 
 def _check_power_zero_watt_segments(
@@ -31,7 +31,7 @@ def _check_power_zero_watt_segments(
     Returns:
     pd.DataFrame: Dataframe with added columns for annotated primitives
     """
-    with _log_time("checking Power segments with 0W", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("checking Power segments with 0W", SHOW_RUNTIME):
         tol_current = THRESHOLDS_PRIMITIVE_ANNOTATION["I"]
         tol_voltage = THRESHOLDS_PRIMITIVE_ANNOTATION["V"]
 
@@ -66,7 +66,7 @@ def _check_power_zero_watt_segments(
                             f"Replaced with voltage segment: {zero_Watt_ids_voltage[:THRESHOLD_CONSOLE_PRINTS_POWER_ZERO_WATT_CHECK]}"
                         )
 
-    with _log_time("correcting Power segments with 0W", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("correcting Power segments with 0W", SHOW_RUNTIME):
         correction_config = {
             "replace_ID": {
                 **{id: "I" for id in zero_Watt_ids_current},

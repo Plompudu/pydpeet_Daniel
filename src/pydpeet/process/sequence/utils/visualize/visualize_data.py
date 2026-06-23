@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from pydpeet.process.sequence.configs.config import _VisualizationConfigClass
-from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
 from pydpeet.utils.guardrails import _guardrail_boolean, _guardrail_dataframe
+from pydpeet.utils.log_time import _log_time
 
 # -------------------------------------------------------------------
 # Compute screen dimensions once
