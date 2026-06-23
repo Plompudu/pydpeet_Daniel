@@ -6,19 +6,20 @@ import pandas as pd
 from scipy import integrate
 from scipy.signal import savgol_filter
 
-from pydpeet.process.analyze.configs.ocv_config import (
-    SEGMENT_SEQUENCE_CONFIG,
-    STEP_ANALYZER_PRIMITIVES_CONFIG,
-)
+from pydpeet.process.analyze.configs.battery_config import battery_config_wrapper
 from pydpeet.process.analyze.extract.ocv import extract_ocv_iocv
-from pydpeet.process.analyze.soc import add_soc
+from pydpeet.process.analyze.soc import SocMethod, add_soc
+from pydpeet.process.sequence.configs.config import (
+    PrimitiveConfig,
+    SequenceOverviewConfig,
+)
 from pydpeet.process.sequence.step_analyzer import (
     add_primitive_segments,
     extract_sequence_overview,
 )
 
 
-def compute_ocv_dva_ica(
+def extract_ocv_dva_ica(
     df_primitives: pd.DataFrame = None,
     df: pd.DataFrame = None,
     min_pause_lenght: float = 120.0,
@@ -73,11 +74,7 @@ def compute_ocv_dva_ica(
 
         df_primitives = add_primitive_segments(
             df=df,
-            STEP_ANALYZER_PRIMITIVES_CONFIG=STEP_ANALYZER_PRIMITIVES_CONFIG,
-            SHOW_RUNTIME=False,
-            check_CV_0Aend_segments_bool=False,
-            check_zero_length_segments_bool=False,
-            supress_IO_warnings=True,
+            config=PrimitiveConfig.OCV_ANALYSIS_DEFAULT,
         )
 
     if df_primitives is not None:
@@ -95,15 +92,18 @@ def compute_ocv_dva_ica(
             logging.info("SOC already exists in df_primitives, skipping SOC calculation...")
         else:
             logging.info("SOC column does not exist in df_primitives, adding it...")
+
+            config = battery_config_wrapper(c_ref=soc_c_ref, max_voltage=soc_max_voltage, min_voltage=soc_min_voltage)
             df_primitives = add_soc(
-                df_primitives,
-                method="withResetWhenFullAndEmpty",
-                max_Voltage=soc_max_voltage,
-                min_Voltage=soc_min_voltage,
-                C_ref=soc_c_ref,
+                df=df_primitives,
+                df_primitives=df_primitives,
+                standard_method=SocMethod.WITH_RESET_WHEN_FULL_AND_EMPTY,
+                config=config,
+                upper_voltage_for_soc=soc_max_voltage,
+                lower_voltage_for_soc=soc_min_voltage,
             )
 
-        df_segments_and_sequences = extract_sequence_overview(df_primitives, SEGMENT_SEQUENCE_CONFIG)
+        df_segments_and_sequences = extract_sequence_overview(df_primitives, config=SequenceOverviewConfig.OCV)
 
     else:
         raise ValueError("No df_primitives found!")
@@ -158,7 +158,7 @@ def compute_ocv_dva_ica(
     logging.info("Computing DVA and ICA for every block...")
     all_dva_ica_curves = []
     for _, block in enumerate(dfs_per_block):
-        df_dva_ica = df_primitives.loc[df_primitives["Test_Time[s]"].isin(block["Test_Time[s]"])]
+        df_dva_ica = df_primitives.loc[df_primitives["Test_Time[s]"].isin(block["Test_Time[s]"])].copy()
 
         voltage = df_dva_ica["Voltage[V]"].to_numpy()
         capacity = df_dva_ica["Capacity_Ah"].to_numpy()
@@ -172,11 +172,14 @@ def compute_ocv_dva_ica(
 
         if savgol:
             logging.info("Applying Savitzky-Golay filter...")
-            window_length = int(len(df_dva_ica["dQ_dV"]) * savgol_window_lenght_percentage)
+            # clean_mask to handle prepended NaN value
+            clean_mask = df_dva_ica["dQ_dV"].notna()
+            clean_vals = df_dva_ica.loc[clean_mask, "dQ_dV"]
+            window_length = int(len(clean_vals) * savgol_window_lenght_percentage)
             if window_length % 2 == 0:
                 window_length += 1
             window_length = max(window_length, 5)
-            df_dva_ica["dQ_dV"] = savgol_filter(df_dva_ica["dQ_dV"], window_length, 2)
+            df_dva_ica.loc[clean_mask, "dQ_dV"] = savgol_filter(clean_vals, window_length, 2)
 
         df_dva_ica["DVA_ICA_type"] = block["DVA_ICA_type"].iloc[0]
         all_dva_ica_curves.append(df_dva_ica)

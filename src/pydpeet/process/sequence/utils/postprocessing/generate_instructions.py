@@ -3,99 +3,8 @@ from typing import Optional
 
 import pandas as pd
 
+from pydpeet.process.sequence.configs.config import SequenceOverviewConfig
 from pydpeet.process.sequence.step_analyzer import extract_sequence_overview
-
-SEGMENTS_CONFIG_STANDARD: dict[str, dict] = {
-    "Pause": {
-        "rules": {
-            "type": "Rest",
-        }
-    },
-    "CC_Charge": {
-        "rules": {
-            "variable": "I",
-            "type": "Constant",
-            "direction": "Charge",
-        }
-    },
-    "CV_Charge": {
-        "rules": {
-            "variable": "V",
-            "type": "Constant",
-            "direction": "Charge",
-        }
-    },
-    "CP_Charge": {
-        "rules": {
-            "variable": "P",
-            "type": "Constant",
-            "direction": "Charge",
-        }
-    },
-    "CC_Discharge": {
-        "rules": {
-            "variable": "I",
-            "type": "Constant",
-            "direction": "Discharge",
-        }
-    },
-    "CV_Discharge": {
-        "rules": {
-            "variable": "V",
-            "type": "Constant",
-            "direction": "Discharge",
-        }
-    },
-    "CP_Discharge": {
-        "rules": {
-            "variable": "P",
-            "type": "Constant",
-            "direction": "Discharge",
-        }
-    },
-    "CRamp_Charge": {
-        "rules": {
-            "variable": "I",
-            "type": "Ramp",
-            "direction": "Up",
-        }
-    },
-    "VRamp_Charge": {
-        "rules": {
-            "variable": "V",
-            "type": "Ramp",
-            "direction": "Up",
-        }
-    },
-    "PRamp_Charge": {
-        "rules": {
-            "variable": "P",
-            "type": "Ramp",
-            "direction": "Up",
-        }
-    },
-    "CRamp_Discharge": {
-        "rules": {
-            "variable": "I",
-            "type": "Ramp",
-            "direction": "Down",
-        }
-    },
-    "VRamp_Discharge": {
-        "rules": {
-            "variable": "V",
-            "type": "Ramp",
-            "direction": "Down",
-        }
-    },
-    "PRamp_Discharge": {
-        "rules": {
-            "variable": "P",
-            "type": "Ramp",
-            "direction": "Down",
-        }
-    },
-}
 
 
 def _parse_segment_type(seg_type: str) -> tuple[str, str | None]:
@@ -184,7 +93,7 @@ def _get_important_entries_per_segment(
     return dataframe_records
 
 
-def generate_instructions(
+def extract_instructions(
     df_primitives: pd.DataFrame,
     end_condition_map: Optional[dict] = None,
     threshold_warnings: int = 5,
@@ -210,7 +119,7 @@ def generate_instructions(
             "Pause": "time",
         }
     df_segments_and_sequences = extract_sequence_overview(
-        df_primitives, SEGMENT_SEQUENCE_CONFIG=SEGMENTS_CONFIG_STANDARD
+        df_primitives, config=SequenceOverviewConfig.GENERATE_INSTRUCTIONS
     )
     results = _get_important_entries_per_segment(df_primitives, df_segments_and_sequences)
     instructions = []
@@ -235,7 +144,7 @@ def generate_instructions(
         end_condition = end_condition_map.get(base_type.replace("Ramp", ""), "time")
 
         # TODO: Docstring
-        def build_instruction(
+        def _build_instruction(
             action: str,
             value_str: str,
             current: float = current,
@@ -260,32 +169,32 @@ def generate_instructions(
                 logging.warning(f"{base_type} segment (ID: {row['ID']}) replaced by CC with Average Current")
                 too_many_warnings += 1
             if direction == "Charge" or (direction is None and current > 0):
-                instructions.append(build_instruction("Charge", f"{abs(current):.3f}A"))
+                instructions.append(_build_instruction("Charge", f"{abs(current):.3f}A"))
             elif direction == "Discharge" or (direction is None and current < 0):
-                instructions.append(build_instruction("Discharge", f"{abs(current):.3f}A"))
+                instructions.append(_build_instruction("Discharge", f"{abs(current):.3f}A"))
 
         # Standard CC (non-ramp current)
         elif base_type == "CC":
             if direction == "Charge" or (direction is None and current > 0):
-                instructions.append(build_instruction("Charge", f"{abs(current):.3f}A"))
+                instructions.append(_build_instruction("Charge", f"{abs(current):.3f}A"))
             elif direction == "Discharge" or (direction is None and current < 0):
-                instructions.append(build_instruction("Discharge", f"{abs(current):.3f}A"))
+                instructions.append(_build_instruction("Discharge", f"{abs(current):.3f}A"))
 
         # Constant voltage (CV)
         elif base_type == "CV":
             voltage = row["End_Value_Voltage[V]"]
             if direction == "Charge" or (direction is None and current > 0):
-                instructions.append(build_instruction("Hold", f"{abs(voltage):.3f}V"))
+                instructions.append(_build_instruction("Hold", f"{abs(voltage):.3f}V"))
             elif direction == "Discharge" or (direction is None and current < 0):
-                instructions.append(build_instruction("Hold", f"{abs(voltage):.3f}V"))
+                instructions.append(_build_instruction("Hold", f"{abs(voltage):.3f}V"))
 
         # Constant power (CP)
         elif base_type == "CP":
             power = row["End_Value_Power[W]"]
             if direction == "Charge" or (direction is None and power > 0):
-                instructions.append(build_instruction("Charge", f"{abs(power):.2f}W"))
+                instructions.append(_build_instruction("Charge", f"{abs(power):.2f}W"))
             elif direction == "Discharge" or (direction is None and power < 0):
-                instructions.append(build_instruction("Discharge", f"{abs(power):.2f}W"))
+                instructions.append(_build_instruction("Discharge", f"{abs(power):.2f}W"))
 
         # Pause/Rest
         elif base_type == "Pause":

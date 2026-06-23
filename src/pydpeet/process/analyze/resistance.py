@@ -4,16 +4,16 @@ import logging
 import numpy as np
 import pandas as pd
 
-from pydpeet.process.analyze.configs.battery_config import BatteryConfig
+from pydpeet.process.analyze.configs.battery_config import _BatteryConfigClass
 from pydpeet.process.analyze.utils import (
-    StepTimer,
+    _StepTimer,
 )
 from pydpeet.utils.guardrails import _guardrail_boolean, _guardrail_dataframe
 
 
 def add_resistance_internal(
     df: pd.DataFrame,
-    config: BatteryConfig = None,
+    config: _BatteryConfigClass = None,
     verbose: bool = True,
 ) -> pd.DataFrame:
     """
@@ -66,26 +66,26 @@ def add_resistance_internal(
     logging.info(f"Starting internal resistance computation on dataframe of size {len(df_mod)}...")
 
     # Calculate differences
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         delta_t = df_mod["Test_Time[s]"].diff()
         delta_current = df_mod["Current[A]"].diff()
         delta_voltage = df_mod["Voltage[V]"].diff()
-        st.log("calculated delta_t, delta_I, delta_V")
+        st._log("calculated delta_t, delta_I, delta_V")
 
     # Only calculate resistance when:
     mask = (
-        (delta_t > 0)  # Time is increasing
+        (delta_t >= 0)  # Time is increasing
         & ((delta_t <= max_time_diff) | (delta_t == 0))  # Within max time window
         & (abs(delta_current) >= min_current_diff)  # Significant current change
         & (abs(delta_voltage) >= min_voltage_diff)  # Significant voltage change
     )
 
     # Calculate resistance only for valid points
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         with np.errstate(divide="ignore", invalid="ignore"):
             resistance = delta_voltage / delta_current
             resistance[~((delta_current != 0) & mask)] = np.nan  # Set invalid calculations to NaN
-        st.log("computed internal resistance for valid points")
+        st._log("computed internal resistance for valid points")
 
     # Assign the calculated resistances
     df_mod["InternalResistance[ohm]"] = resistance

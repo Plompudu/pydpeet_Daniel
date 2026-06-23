@@ -1,11 +1,12 @@
 import logging
+from dataclasses import replace
 
 import numpy as np
 import pandas as pd
 import pytest
 
 from pydpeet.res.res_for_unittests.res import Mocks
-from pydpeet.utils.assert_raises_and_print import assert_raises_and_print
+from pydpeet.utils.assert_raises_and_print import _assert_raises_and_print
 from src.pydpeet import extract_sequence_overview
 
 
@@ -14,8 +15,7 @@ def base_args():
     """Provides a fresh dictionary of default arguments for every test."""
     return {
         "df_primitives": Mocks.Mock_extract_sequence_overview.df_primitives.copy(),
-        "SEGMENT_SEQUENCE_CONFIG": Mocks.Mock_extract_sequence_overview.SEGMENT_SEQUENCE_CONFIG,
-        "SHOW_RUNTIME": Mocks.Mock_extract_sequence_overview.SHOW_RUNTIME,
+        "config": replace(Mocks.Mock_extract_sequence_overview.config),
     }
 
 
@@ -30,22 +30,22 @@ class Test_extract_sequence_overview_df_primitives:
 
     def test_none(self, base_args):
         base_args["df_primitives"] = None
-        assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
+        _assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["df_primitives"] = "wrong type"
         assert not isinstance(base_args["df_primitives"], pd.DataFrame)
-        assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
+        _assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
 
     def test_empty(self, base_args):
         base_args["df_primitives"] = pd.DataFrame()
-        assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
+        _assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
 
     def test_missing_required_columns(self, base_args):
         base_args["df_primitives"] = base_args["df_primitives"].drop(
             Mocks.Mock_extract_sequence_overview.required_columns, axis=1
         )
-        assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
+        _assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
 
     def test_wrong_column_dtypes(self, base_args):
         for col, _dtype in Mocks.Mock_extract_sequence_overview.required_columns_dtypes:
@@ -55,7 +55,7 @@ class Test_extract_sequence_overview_df_primitives:
         )
         actual_dtypes = base_args["df_primitives"][Mocks.Mock_extract_sequence_overview.required_columns].dtypes
         assert not actual_dtypes.equals(expected_dtypes)
-        assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
+        _assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
 
     def test_nan_values(self, base_args, caplog):
         base_args["df_primitives"].loc[:9, Mocks.Mock_extract_sequence_overview.required_columns[0]] = np.nan
@@ -99,7 +99,7 @@ class Test_extract_sequence_overview_SEGMENT_SEQUENCE_CONFIG:
 
 class Test_extract_sequence_overview_SHOW_RUNTIME:
     def test_true(self, base_args):
-        base_args["SHOW_RUNTIME"] = True
+        base_args["config"].show_runtime = True
         result = extract_sequence_overview(**base_args)
         assert all(col in result.columns for col in Mocks.Mock_extract_sequence_overview.add_columns)
         # Compare with expected result
@@ -107,7 +107,7 @@ class Test_extract_sequence_overview_SHOW_RUNTIME:
         assert pd.DataFrame.equals(result, expected)
 
     def test_false(self, base_args):
-        base_args["SHOW_RUNTIME"] = False
+        base_args["config"].show_runtime = False
         result = extract_sequence_overview(**base_args)
         assert all(col in result.columns for col in Mocks.Mock_extract_sequence_overview.add_columns)
         # Compare with expected result
@@ -115,10 +115,10 @@ class Test_extract_sequence_overview_SHOW_RUNTIME:
         assert pd.DataFrame.equals(result, expected)
 
     def test_none(self, base_args):
-        base_args["SHOW_RUNTIME"] = None
-        assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
+        base_args["config"].show_runtime = None
+        _assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
 
     def test_wrong_type(self, base_args):
-        base_args["SHOW_RUNTIME"] = "wrong type"
-        assert not isinstance(base_args["SHOW_RUNTIME"], bool)
-        assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)
+        base_args["config"].show_runtime = "wrong type"
+        assert not isinstance(base_args["config"].show_runtime, bool)
+        _assert_raises_and_print(ValueError, extract_sequence_overview, **base_args)

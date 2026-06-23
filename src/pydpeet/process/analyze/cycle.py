@@ -5,13 +5,13 @@ import numpy as np
 import pandas as pd
 
 from pydpeet.process.analyze.capacity import add_charge_throughput
-from pydpeet.process.analyze.configs.battery_config import BatteryConfig
-from pydpeet.process.analyze.utils import StepTimer
+from pydpeet.process.analyze.configs.battery_config import _BatteryConfigClass
+from pydpeet.process.analyze.utils import _StepTimer
 
 
 def add_equivalent_full_cycles(
     df: pd.DataFrame,
-    config: BatteryConfig = None,
+    config: _BatteryConfigClass = None,
     verbose: bool = True,
 ) -> pd.DataFrame:
     """
@@ -54,12 +54,12 @@ def add_equivalent_full_cycles(
         logging.info(
             "AbsoluteChargeThroughput[Ah] not found, adding AbsoluteChargeThroughput[Ah] column with add_charge_throughput function..."
         )
-        with StepTimer(verbose) as st:
+        with _StepTimer(verbose) as st:
             df_mod = add_charge_throughput(df_mod)
-            st.log("added charge throughput column to df")
+            st._log("added charge throughput column to df")
 
-    with StepTimer(verbose) as st:
+    with _StepTimer(verbose) as st:
         df_mod["EquivalentFullCycles"] = df_mod["AbsoluteChargeThroughput[Ah]"] / (c_ref * 2)
-        st.log("computed Equivalent Full Cycles")
+        st._log("computed Equivalent Full Cycles")
 
     return df_mod

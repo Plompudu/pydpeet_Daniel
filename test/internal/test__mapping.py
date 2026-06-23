@@ -5,8 +5,12 @@ import pandas as pd
 import pytest
 
 from pydpeet.res.res_for_unittests.res import Mocks
-from pydpeet.utils.assert_raises_and_print import assert_raises_and_print
-from src.pydpeet import mapping
+from pydpeet.utils.assert_raises_and_print import _assert_raises_and_print
+
+
+# placeholder instead of import
+def _mapping(**kwargs):
+    return _mapping(**kwargs)
 
 
 @pytest.fixture
@@ -22,7 +26,7 @@ def base_args():
 class Test_mapping_data_frame:
     def test_valid(self, base_args):
         original_df = base_args["data_frame"].copy()
-        result = mapping(**base_args)
+        result = _mapping(**base_args)
         # Check that add_columns are present
         assert all(col in result.columns for col in Mocks.Mock_mapping.add_columns)
         # Check that mapped columns have correct standardized names
@@ -33,20 +37,20 @@ class Test_mapping_data_frame:
 
     def test_none(self, base_args):
         base_args["data_frame"] = None
-        assert_raises_and_print(ValueError, mapping, **base_args)
+        _assert_raises_and_print(ValueError, _mapping, **base_args)
 
     def test_wrong_type(self, base_args):
         base_args["data_frame"] = "wrong type"
         assert not isinstance(base_args["data_frame"], pd.DataFrame)
-        assert_raises_and_print(ValueError, mapping, **base_args)
+        _assert_raises_and_print(ValueError, _mapping, **base_args)
 
     def test_empty(self, base_args):
         base_args["data_frame"] = pd.DataFrame()
-        assert_raises_and_print(ValueError, mapping, **base_args)
+        _assert_raises_and_print(ValueError, _mapping, **base_args)
 
     def test_missing_required_columns(self, base_args):
         base_args["data_frame"] = base_args["data_frame"].drop(Mocks.Mock_mapping.required_columns, axis=1)
-        assert_raises_and_print(ValueError, mapping, **base_args)
+        _assert_raises_and_print(ValueError, _mapping, **base_args)
 
     def test_wrong_column_dtypes(self, base_args):
         # Mapping function only renames columns, doesn't validate dtypes
@@ -56,7 +60,7 @@ class Test_mapping_data_frame:
     def test_nan_values(self, base_args, caplog):
         base_args["data_frame"].loc[:9, Mocks.Mock_mapping.required_columns[0]] = np.nan
         with caplog.at_level(logging.WARNING):
-            result = mapping(**base_args)
+            result = _mapping(**base_args)
         # Check result has mapped columns with NaN values preserved
         mapped_col = Mocks.Mock_mapping.column_map[Mocks.Mock_mapping.required_columns[0]]
         assert pd.isna(result[mapped_col].iloc[:10]).all()
@@ -70,7 +74,7 @@ class Test_mapping_data_frame:
     def test_inf_values(self, base_args, caplog):
         base_args["data_frame"].loc[:9, Mocks.Mock_mapping.required_columns[0]] = np.inf
         with caplog.at_level(logging.WARNING):
-            result = mapping(**base_args)
+            result = _mapping(**base_args)
         # Check result has mapped columns with inf values preserved
         mapped_col = Mocks.Mock_mapping.column_map[Mocks.Mock_mapping.required_columns[0]]
         assert np.isinf(result[mapped_col].iloc[:10]).all()

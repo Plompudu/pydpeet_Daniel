@@ -5,7 +5,8 @@ from typing import Optional
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from pydpeet.process.sequence.utils.console_prints.log_time import log_time
+from pydpeet.process.sequence.configs.config import _VisualizationConfigClass
+from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
 from pydpeet.utils.guardrails import _guardrail_boolean, _guardrail_dataframe
 
 # -------------------------------------------------------------------
@@ -74,7 +75,7 @@ def _visualize_phases(
         width_height_ratio = [1.0, 0.3]
 
     # 1) Filter by time
-    with log_time("filtering by time", show_runtime):
+    with _log_time("filtering by time", show_runtime):
         mask = pd.Series(True, index=dataframe.index)
         if start_time is not None:
             mask &= dataframe["Test_Time[s]"] >= start_time
@@ -83,19 +84,19 @@ def _visualize_phases(
         df = dataframe.loc[mask]
 
     # 2) Normalize line colors and y-axis ranges
-    with log_time("normalizing colors and y-axis ranges", show_runtime):
+    with _log_time("normalizing colors and y-axis ranges", show_runtime):
         line_colors = line_colors or {}
         y_axis_ranges = y_axis_ranges or {}
 
     # 3) Map segment colors to `Variable` values
-    with log_time("mapping segment colors", show_runtime):
+    with _log_time("mapping segment colors", show_runtime):
         if segment_id_cols is None or segment_colors is None:
             segment_colors = {}
         else:
             segment_colors = {var: col for var, col in zip(segment_id_cols, segment_colors, strict=False)}
 
     # 4) Set up figure
-    with log_time("setting up figure", show_runtime):
+    with _log_time("setting up figure", show_runtime):
         screen_w, screen_h = _SCREEN_DIMS
         dpi = plt.rcParams["figure.dpi"]
         fig_w, fig_h = (screen_w * width_height_ratio[0]) / dpi, (screen_h * width_height_ratio[1]) / dpi
@@ -126,21 +127,21 @@ def _visualize_phases(
             fig.subplots_adjust(right=1 + offset + 0.05)
 
     # 5) Plot data
-    with log_time("plotting data", show_runtime):
+    with _log_time("plotting data", show_runtime):
         t = df["Test_Time[s]"]
         for col in columns_to_visualize:
             if col in df.columns:
                 axes[col].plot(t, df[col], label=col, color=line_colors.get(col))
 
     # 6) Group segments by ID + Variable
-    with log_time("grouping segments by ID + Variable", show_runtime):
+    with _log_time("grouping segments by ID + Variable", show_runtime):
         stats = df.groupby(["ID", "Variable"])["Test_Time[s]"].agg(tmin="min", tmax="max").reset_index()
 
     y0, y1 = ax_base.get_ylim()
     height = y1 - y0
 
     # 7) Draw segment backgrounds and labels
-    with log_time("drawing segment backgrounds and labels", show_runtime):
+    with _log_time("drawing segment backgrounds and labels", show_runtime):
         intervals = []
         colors = []
         vline_positions = []
@@ -186,7 +187,7 @@ def _visualize_phases(
             ax_base.text(x_center, mid_y, label, ha="center", va="center", rotation=90, size=10)
 
     # 8) Adding grid and legend
-    with log_time("adding grid and legend", show_runtime):
+    with _log_time("adding grid and legend", show_runtime):
         # TODO power labels multiple times shown fix?
         ax_base.set_xlabel("Testtime [s]")
         legend_handles, legend_labels = [], []
@@ -201,21 +202,34 @@ def _visualize_phases(
         plt.tight_layout()
 
 
-# TODO: Docstring
 def visualize_phases(
-    dataframe: pd.DataFrame,
-    start_time: Optional[float] = None,
-    end_time: Optional[float] = None,
-    visualize_phases_config: Optional[list[tuple[str, str]]] = None,
-    segment_alpha: float = 0.3,
-    line_visualization_config: Optional[list[tuple[str, str, tuple[float, float]]]] = None,
-    use_lines_for_segments: bool = True,
-    show_column_names: bool = True,
-    show_time: bool = True,
-    show_id: bool = True,
-    width_height_ratio: Optional[tuple[float, float] | list[float]] = None,
-    show_runtime: bool = True,
+    df: pd.DataFrame,
+    config: _VisualizationConfigClass,
 ) -> None:
+    """
+    Visualizes the given dataframe by plotting all columns over time.
+
+    Parameters:
+        df (pd.DataFrame): The dataframe to be visualized.
+        config (_VisualizationConfigClass): Configuration object containing visualization parameters.
+            Use VisualizationConfig.DEFAULT, VisualizationConfig.OCV, or create custom config via visualization_config_wrapper().
+
+    Returns:
+        None
+    """
+    # --- Extract configuration from config object ---
+    visualize_phases_config = config.visualize_phases_config
+    line_visualization_config = config.line_visualization_config
+    start_time = config.start
+    end_time = config.end
+    use_lines_for_segments = config.use_lines_for_segments
+    show_column_names = config.show_column_names
+    show_time = config.show_time
+    show_id = config.show_id
+    show_runtime = config.show_runtime
+    segment_alpha = config.segment_alpha
+    width_height_ratio = config.width_height_ratio
+
     # Guardrail checks for dataframe
     required_column_dtypes = [
         ("Test_Time[s]", float),
@@ -228,7 +242,7 @@ def visualize_phases(
     required_columns = [col for col, _ in required_column_dtypes]
 
     _guardrail_dataframe(
-        dataframe,
+        df,
         hard_fail_missing_required_columns=(True, required_columns),
         hard_fail_wrong_column_dtypes=(True, required_column_dtypes),
         hard_fail_inf_values=(False, required_columns),
@@ -239,37 +253,16 @@ def visualize_phases(
     # Guardrail checks for boolean parameters
     for boolean_param in [use_lines_for_segments, show_column_names, show_time, show_id, show_runtime]:
         _guardrail_boolean(boolean_param, hard_fail_none=True, hard_fail_wrong_type=True)
-    # Set default values for mutable data structures
-    if visualize_phases_config is None:
-        visualize_phases_config = [
-            ("V", "blue"),
-            ("I", "red"),
-            ("P", "green"),
-        ]
-    if line_visualization_config is None:
-        line_visualization_config = [
-            ("Voltage[V]", "blue", (2.3, 4.3)),
-            ("Current[A]", "red", (-10, 10)),
-            # ("Power[W]", "green", (-40, 40)),
-        ]
-    if width_height_ratio is None:
-        width_height_ratio = [1.0, 0.3]
 
-    if start_time is None:
-        logging.warning("start_time is None - setting it to 0.0")
-        start_time = 0.0
-    if end_time is None:
-        logging.warning("end_time is None - setting it to the biggest possible float")
-        end_time = float("inf")
-    if dataframe is None:
+    if df is None:
         raise ValueError("dataframe is None")
-    if not isinstance(dataframe, pd.DataFrame):
+    if not isinstance(df, pd.DataFrame):
         raise TypeError("dataframe must be a pandas DataFrame")
     if not (isinstance(width_height_ratio, list | tuple) and len(width_height_ratio) == 2):
         raise ValueError("width_height_ratio must be a list or tuple of length 2")
-    if "Test_Time[s]" not in dataframe.columns:
+    if "Test_Time[s]" not in df.columns:
         raise ValueError("dataframe needs to have at least column 'Test_Time[s]'")
-    if "ID" not in dataframe.columns:
+    if "ID" not in df.columns:
         raise ValueError("dataframe needs to have at least column 'ID'")
     if not isinstance(visualize_phases_config, list):
         raise TypeError("visualize_phases_config must be a list")
@@ -280,11 +273,6 @@ def visualize_phases(
     if not (0 <= segment_alpha <= 1):
         logging.warning("segment_alpha must be between 0 and 1 - resetting it now to 0.3")
         segment_alpha = 0.3
-
-    if start_time is None:
-        start_time = dataframe["Test_Time[s]"].min()
-    if end_time is None:
-        end_time = dataframe["Test_Time[s]"].max()
 
     segment_id_cols = [col for col, _ in visualize_phases_config]
     segment_colors = [color for _, color in visualize_phases_config]
@@ -302,7 +290,7 @@ def visualize_phases(
         raise TypeError("columns_to_visualize must be a list")
 
     _visualize_phases(
-        dataframe=dataframe,
+        dataframe=df,
         start_time=start_time,
         end_time=end_time,
         segment_id_cols=segment_id_cols,

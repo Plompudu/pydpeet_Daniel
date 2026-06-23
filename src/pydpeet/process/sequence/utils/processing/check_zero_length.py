@@ -3,7 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from pydpeet.process.sequence.utils.console_prints.log_time import log_time
+from pydpeet.process.sequence.utils.console_prints.log_time import _log_time
 from pydpeet.process.sequence.utils.postprocessing.df_primitives_correction import df_primitives_correction
 
 
@@ -31,7 +31,7 @@ def _check_zero_length_segments(
     Returns:
     pd.DataFrame: Dataframe with added columns for annotated primitives
     """
-    with log_time("checking zero length segments", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("checking zero length segments", SHOW_RUNTIME=SHOW_RUNTIME):
         zero_length_ids = df_primitives[df_primitives["Length"] == 0]["ID"].unique().tolist()
 
         zero_length_ids_left_merge = []
@@ -76,7 +76,7 @@ def _check_zero_length_segments(
             else:
                 zero_length_ids_right_merge.append(zero_id)
 
-    with log_time("correcting zero length segments", SHOW_RUNTIME=SHOW_RUNTIME):
+    with _log_time("correcting zero length segments", SHOW_RUNTIME=SHOW_RUNTIME):
         correction_config = {
             "merge_left": [*zero_length_ids_left_merge],
             "merge_right": [*zero_length_ids_right_merge],

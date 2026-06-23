@@ -2,8 +2,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from pydpeet import BatteryConfig, SocMethod
-from pydpeet.process.sequence.utils.configs.CONFIG_Fallback import FALLBACK_CONFIG, SEGMENT_SEQUENCE_CONFIG
+from pydpeet import BatteryConfig, SocMethod, battery_config_wrapper
+from pydpeet.process.sequence.configs.config import (
+    PrimitiveConfig,
+    SequenceOverviewConfig,
+    VisualizationConfig,
+)
 
 # Get the directory where the current script is located
 BASE_DIR = Path(__file__).resolve().parent
@@ -89,7 +93,7 @@ class Mocks:
         df = DF
         df_primitives = DF_PRIMITIVES
         neware_bool = True
-        config = BatteryConfig()
+        config = BatteryConfig.DEFAULT
         verbose = True
         required_columns_df = ["Voltage[V]", "Current[A]", "Test_Time[s]"]
         required_column_dtypes_df = [("Voltage[V]", float), ("Current[A]", float), ("Test_Time[s]", float)]
@@ -131,24 +135,7 @@ class Mocks:
 
     class Mock_add_primitive_segments:
         df = DF
-        STEP_ANALYZER_PRIMITIVES_CONFIG = FALLBACK_CONFIG
-        SEGMENTS_TO_DETECT_CONFIG = FALLBACK_CONFIG["SEGMENTS_TO_DETECT_CONFIG"]
-        ADJUST_SEGMENTS_CONFIG = FALLBACK_CONFIG["ADJUST_SEGMENTS_CONFIG"]
-        THRESHOLDS_PRIMITIVE_ANNOTATION = FALLBACK_CONFIG["THRESHOLDS_PRIMITIVE_ANNOTATION"]
-        THRESHOLD_CV_SEGMENTS_0A_END = FALLBACK_CONFIG["THRESHOLD_CV_SEGMENTS_0A_END"]
-        THRESHOLD_CONSOLE_PRINTS_CV_CHECK = FALLBACK_CONFIG["THRESHOLD_CONSOLE_PRINTS_CV_CHECK"]
-        THRESHOLD_CONSOLE_PRINTS_ZERO_LENGTH_CHECK = FALLBACK_CONFIG["THRESHOLD_CONSOLE_PRINTS_ZERO_LENGTH_CHECK"]
-        THRESHOLD_CONSOLE_PRINTS_FINETUNING_WIDTH = FALLBACK_CONFIG["THRESHOLD_CONSOLE_PRINTS_FINETUNING_WIDTH"]
-        THRESHOLD_CONSOLE_PRINTS_POWER_ZERO_WATT_CHECK = FALLBACK_CONFIG[
-            "THRESHOLD_CONSOLE_PRINTS_POWER_ZERO_WATT_CHECK"
-        ]
-        SHOW_RUNTIME = True
-        check_CV_0Aend_segments_bool = True
-        check_zero_length_segments_bool = True
-        check_Power_zero_W_segments_bool = True
-        supress_IO_warnings = True
-        PRECOMPILE = True
-        FORCE_PRECOMPILATION = True
+        config = PrimitiveConfig.FALLBACK
         required_columns = ["Voltage[V]", "Current[A]", "Test_Time[s]"]
         required_columns_dtypes = [("Voltage[V]", float), ("Current[A]", float), ("Test_Time[s]", float)]
         add_columns = [
@@ -168,7 +155,7 @@ class Mocks:
 
     class Mock_add_resistance_internal:
         df = DF
-        config = BatteryConfig()
+        config = BatteryConfig.DEFAULT
         verbose = True
         required_columns = ["Voltage[V]", "Current[A]", "Test_Time[s]"]
         required_columns_dtypes = [("Voltage[V]", float), ("Current[A]", float), ("Test_Time[s]", float)]
@@ -181,7 +168,7 @@ class Mocks:
         neware_bool = True
         standard_method = SocMethod.WITHOUT_RESET
         methods = [SocMethod.WITHOUT_RESET, SocMethod.WITH_RESET_WHEN_FULL]
-        config = BatteryConfig()
+        config = BatteryConfig.DEFAULT
         lower_soc_for_voltage = 0.0
         upper_soc_for_voltage = 1.0
         lower_voltage_for_soc = 0.0
@@ -271,7 +258,7 @@ class Mocks:
         visualize = False
         df = DF_NEWARE.copy()
         df_primitives = DF_NEWARE_PRIMITIVES.copy()
-        config = BatteryConfig(c_ref=4.75, max_voltage=4.2, min_voltage=2.5, voltage_intervall=0.01)
+        config = battery_config_wrapper(c_ref=4.75, max_voltage=4.2, min_voltage=2.5, voltage_intervall=0.01)
         required_columns_df = ["Voltage[V]", "Current[A]", "Test_Time[s]"]
         required_columns_dtypes_df = [("Voltage[V]", float), ("Current[A]", float), ("Test_Time[s]", float)]
         required_columns_df_primitives = ["Test_Time[s]", "Type", "Duration", "ID", "Voltage[V]"]
@@ -290,8 +277,7 @@ class Mocks:
 
     class Mock_extract_sequence_overview:
         df_primitives = DF_PRIMITIVES.copy()
-        SEGMENT_SEQUENCE_CONFIG = SEGMENT_SEQUENCE_CONFIG.copy()
-        SHOW_RUNTIME = True
+        config = SequenceOverviewConfig.DEFAULT
         required_columns = [
             "Test_Time[s]",
             "Voltage[V]",
@@ -440,26 +426,8 @@ class Mocks:
         formatting_string = "%(levelname)s | %(pathname)s:%(lineno)d | %(message)s"
 
     class Mock_visualize_phases:
-        dataframe = DF_PRIMITIVES.copy()
-        start_time = None
-        end_time = None
-        visualize_phases_config = [
-            ("V", "blue"),
-            ("I", "red"),
-            ("P", "green"),
-        ]
-        segment_alpha = 0.3
-        line_visualization_config = [
-            ("Voltage[V]", "blue", (2.3, 4.3)),
-            ("Current[A]", "red", (-10, 10)),
-            ("Power[W]", "green", (-40, 40)),
-        ]
-        use_lines_for_segments = True
-        show_column_names = True
-        show_time = True
-        show_id = True
-        width_height_ratio = [1.0, 0.3]
-        show_runtime = True
+        df = DF_PRIMITIVES.copy()
+        config = VisualizationConfig.DEFAULT
         add_columns = []
         required_columns = ["Test_Time[s]", "ID", "Variable", "Voltage[V]", "Current[A]", "Power[W]"]
         required_columns_dtypes = [
