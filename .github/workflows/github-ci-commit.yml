@@ -80,7 +80,6 @@ jobs:
         run: |
           uv run pytest -v test/api_accessible \
             --junitxml=report.xml \
-            -n 5 \
             --cov=src/pydpeet \
             --cov-report=term \
             --cov-report=html:coverage_html \
