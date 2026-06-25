@@ -109,7 +109,7 @@ exclude = [
     "test/",
     "docs/",
     "benchmarks/",
-    "dev_utils/",
+    "_dev_utils/",
     "res/",
     ".*egg-info/",
 ]
@@ -118,6 +118,6 @@ exclude = [
 [tool.coverage.run]
 source = ["src/pydpeet"]
 omit = [
-    "*/dev_utils/*",
+    "*/_dev_utils/*",
     "*/res/*",
 ]

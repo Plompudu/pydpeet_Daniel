@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from pydpeet.dev_utils.check_test_coverge.check_test_coverage import check_tests_and_generate_missing_test_files
+from pydpeet._dev_utils.check_test_coverge.check_test_coverage import check_tests_and_generate_missing_test_files
 
 
 class TestCoverage:
     def test_full_coverage(self):
         project_root = Path(__file__).resolve().parents[2]
 
-        config_path = project_root / "src/pydpeet/dev_utils/generate_inits/config.json"
+        config_path = project_root / "src/pydpeet/_dev_utils/generate_inits/config.json"
         api_tests = project_root / "test/api_accessible"
         private_tests = project_root / "test/internal"
         src_dir = project_root / "src"
@@ -17,7 +17,7 @@ class TestCoverage:
                 config=config_path,
                 tests_dir=(api_tests, private_tests),
                 src_dir=src_dir,
-                exclude_dirs=["dev_utils", "res"],
+                exclude_dirs=["_dev_utils", "res"],
                 test_prefix="test_",
                 test_ext=".py",
                 case_sensitive=True,
