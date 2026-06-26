@@ -1,6 +1,10 @@
+
+<div align="center">
 [![PyPI](https://img.shields.io/pypi/v/pydpeet)](https://pypi.org/project/pydpeet/)
 [![Docs](https://img.shields.io/badge/docs-latest-blue)](https://eet-tub.github.io/pydpeet/)
 [![License](https://img.shields.io/github/license/eet-tub/pydpeet)](LICENSE)
+</div>
+
 
 <!-- [![Python](https://img.shields.io/pypi/pyversions/pydpeet)](https://pypi.org/project/pydpeet/)
 [![CI](https://github.com/eet-tub/pydpeet/actions/workflows/github-ci.yml/badge.svg)](https://github.com/eet-tub/pydpeet/actions/workflows/github-ci.yml)
