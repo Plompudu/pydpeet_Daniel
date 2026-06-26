@@ -37,11 +37,14 @@ Functions for detecting, correcting, filtering, and visualizing test sequences a
    :nosignatures:
 
    :caption: Sequence and primitive processing
+   pydpeet.PrimitiveConfig
+   pydpeet.SequenceOverviewConfig
    pydpeet.add_primitive_segments
    pydpeet.df_primitives_correction
    pydpeet.extract_sequence_overview
    pydpeet.filter_and_split_df_by_blocks
-   pydpeet.generate_instructions
+   pydpeet.primitive_config_wrapper
+   pydpeet.sequence_overview_config_wrapper
    pydpeet.visualize_phases
 ```
 
@@ -56,8 +59,14 @@ Functions that add derived quantities such as SOC, capacity, or resistance to ex
 
    :caption: Add derived quantities
    pydpeet.add_capacity
+   pydpeet.add_charge_throughput
+   pydpeet.add_cumulative_energy
+   pydpeet.add_efficiency_coulomb
+   pydpeet.add_equivalent_full_cycles
+   pydpeet.add_power
    pydpeet.add_resistance_internal
    pydpeet.add_soc
+   pydpeet.add_soh
 ```
 
 ## Extract data
@@ -70,6 +79,8 @@ Functions for extracting OCV points, sequence summaries, and other reduced repre
    :nosignatures:
 
    :caption: Extract data
+   pydpeet.extract_instructions
+   pydpeet.extract_ocv_dva_ica
    pydpeet.extract_ocv_iocv
 ```
 
@@ -98,11 +109,19 @@ Additional public functions, classes, configurations, and utilities that do not 
 
    :caption: Other
    pydpeet.BatteryConfig
+   pydpeet.DataOutputFiletype
+   pydpeet.DeviceConfig
+   pydpeet.ReadConfig
    pydpeet.SocMethod
-   pydpeet.battery_config_default
-   pydpeet.hakadi_nmc_1500
-   pydpeet.lgm50lt_nmc_4800
-   pydpeet.mapping
+   pydpeet.VisualizationConfig
+   pydpeet.battery_config_wrapper
+   pydpeet.calculate_minimum_definitive_differences
+   pydpeet.filter_df
+   pydpeet.load_custom_module
+   pydpeet.merge_into_campaign
+   pydpeet.return_or_print_blocks
    pydpeet.set_logging_style
+   pydpeet.split_df_by_blocks
+   pydpeet.visualization_config_wrapper
 ```
 

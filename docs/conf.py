@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+import os
 
 # --- Paths -----------------------------------------------------------------
 DOCS_DIR = Path(__file__).resolve().parent
@@ -111,7 +112,7 @@ html_theme_options = {
     "navbar_center": ["navbar-nav"],  # Show main navigation links in the center
     "navbar_end": [
         "theme-switcher",
-        # "version-switcher", # saved for later when wie have multiple versions
+        "version-switcher", # saved for later when wie have multiple versions
         "navbar-icon-links",
         "searchbox.html",
     ],
@@ -131,7 +132,13 @@ html_theme_options = {
             "url": "https://github.com/eet-tub/pydpeet",
             "icon": "fa-brands fa-github",
         },
+        
     ],
+
+    "switcher": {
+        "json_url": "https://eet-tub.github.io/pydpeet/_static/switcher.json",
+        "version_match": os.environ.get("PYDPEET_DOC_VERSION", "stable"),
+    },
 }
 
 # Controls the sidebar components. `sidebar-nav-bs.html` renders the project tree.
