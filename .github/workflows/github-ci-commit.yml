@@ -1,5 +1,6 @@
 name: CI_Commit
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches:
@@ -81,7 +82,7 @@ jobs:
       - name: run_tests
         run: |
           uv run pytest -v test/api_accessible \
-            -n auto \
+            -n 2 \
             --junitxml=report.xml \
             --cov=src/pydpeet \
             --cov-report=term \

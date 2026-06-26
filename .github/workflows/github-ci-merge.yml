@@ -1,5 +1,6 @@
 name: CI_Merge
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -45,7 +46,7 @@ jobs:
       - name: pages_configure
         uses: actions/configure-pages@v5
       - name: pages_artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           name: docs-html
           path: docs/_build/html
