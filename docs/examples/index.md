@@ -2,7 +2,7 @@
 
 Here you can find tutorials and practical examples for the most important public PyDPEET functions.
 
-In addition, this section contains research publications and posters that used PyDPEET for battery data processing and analysis. These examples provide insight into how PyDPEET was applied in real scientific workflows and include example notebooks and scripts where available.
+<!-- In addition, this section contains research publications and posters that used PyDPEET for battery data processing and analysis. These examples provide insight into how PyDPEET was applied in real scientific workflows and include example notebooks and scripts where available. -->
 
 ## Tutorials
 
@@ -10,53 +10,30 @@ In addition, this section contains research publications and posters that used P
 .. nbgallery::
    :name: Tutorials
 
-   notebooks/Tutorial_01_Convert_Import
-   notebooks/Tutorial_02_Merge
-   notebooks/Tutorial_03_Sequence
-   notebooks/Tutorial_04_iOCV
-   notebooks/Tutorial_05_SOC
-   notebooks/Tutorial_06_SOH_C
-   notebooks/Tutorial_07_SOH_R
+   notebooks/Tutorial_00_Setup
+   notebooks/Tutorial_01_read&ReadConfig
+   notebooks/Tutorial_02_write&DataOutputFiletype
+   notebooks/Tutorial_03_print_references&write_to_bibtex
+   notebooks/Tutorial_04_merge_into_series
+   notebooks/Tutorial_05_1_add_primitive_segments
+   notebooks/Tutorial_05_2_PrimitiveConfig&primitive_config_wrapper&DeviceConfig&calculate_minimum_definitive_differences
+   notebooks/Tutorial_06_visualize_phases&VisualizationConfig&visualization_config_wrapper
+   notebooks/Tutorial_07_BatteryConfig&battery_config_wrapper
+   notebooks/Tutorial_08_add_capacity
+   notebooks/Tutorial_09_add_charge_throughput
+   notebooks/Tutorial_10_add_cumulative_energy
+   notebooks/Tutorial_11_add_efficiency_coulomb
+   notebooks/Tutorial_12_add_equivalent_full_cycles
+   notebooks/Tutorial_13_add_power
+   notebooks/Tutorial_14_add_resistance_internal
+   notebooks/Tutorial_15_add_soc&SocMethod
+   notebooks/Tutorial_16_add_soh
+   notebooks/Tutorial_17_extract_sequence_overview&SequenceOverviewConfig&sequence_overview_config_wrapper
+   notebooks/Tutorial_18_extract_instructions
+   notebooks/Tutorial_19_extract_ocv_iocv
+   notebooks/Tutorial_20_extract_ocv_dva_ica
 ```
 
+## Publications
 
-## Usage in Research Publications
-
-:::{card} 2026/04 | PyDPEET: A Python Package for Fast and Easy Battery Data Unification, Processing, and Analysis
-:class-card: sd-rounded-3 sd-shadow-sm
-
-<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; align-items: start;">
-
-<div>
-
-```{image} research/2026_KWB/KWB2026_otto_Preview.png
-:width: 100%
-<!-- :target: research/2026_KWB/P3-005_Otto.pdf -->
-```
-
-</div>
-
-<div>
-
-### Abstract
-
-PyDPEET ("Data Processing for Electrical Energy Storage Technologies") is an open-source Python package developed to facilitate battery data analysis. It targets a common problem: lab and field tests produce large, mixed datasets in different file formats. Manual preprocessing is slow, error-prone, and hard to reproduce. PyDPEET offers a transparent workflow that standardises raw files, processes them with consistent rules, and provides evaluation functionality within a highly integrated code base. The package also offers full user flexibility via custom parameter configuration.
-
-</div>
-
-<div>
-
-### Resources
-
-- {doc}`Example Notebook <research/2026_KWB/Usage_Example>`
-- [Poster PDF](research/2026_KWB/P3-005_Otto.pdf)
-<!-- - [DOI]() -->
-
-### Cite
-Otto, M., Schlösser, A., Schröder, D., De Simone, C., Hinrichsen, A., Kalisch, J., & Kowal, J. (2026). PyDPEET: A Python Package for Fast and Easy Battery Data Unification, Processing, and Analysis [Poster]. Advanced Battery Power, Münster, Germany.
-
-</div>
-
-</div>
-
-:::
+For examples of how PyDPEET has been used in scientific research, visit the [publications](../publications/index.md) page. Where available, publications include links to the corresponding source code and example notebooks.

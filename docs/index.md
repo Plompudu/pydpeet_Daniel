@@ -3,10 +3,11 @@
 :hidden:
 
 installation
-quickstart
 examples/index
 api/index
 developer
+Publications
+publications/index
 ```
 
 
@@ -29,7 +30,7 @@ The documentation is organised around the most important ways people use PyDPEET
 <!-- - [Project maintenance](project_maintenance.md) -->
 <!-- - [Contribution Guide](contribution.md) explains how to contribute new code, examples, and research-driven functionality in a way that is useful for other users and citable in future work. -->
 - [Examples](examples/index.md) collects beginner-oriented walkthroughs and research-oriented reproductions of publications.
-<!-- - [Publications](index.md) Every publications, which used PyDPEET and the authors send us their code.   -->
+- [Publications](publications/index.md) Every publications, which used PyDPEET. 
 - [API Reference](api/index.md) documents the public functions that are intended to be imported and used directly.
 - [Developer Guide](developer.md) explains how to set up a development environment, build the documentation, expose new functions through the public API, and keep the project quality checks green.
 
