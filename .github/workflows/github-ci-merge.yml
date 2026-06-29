@@ -47,10 +47,10 @@ jobs:
         run: uv run docs/build_docs.py
       - name: prepare_pages
         run: |
-          mkdir -p public/latest
-          cp -r docs/_build/html/* public/latest/
+          mkdir -p docs/_public/latest
+          cp -r docs/_build/html/* docs/_public/latest/
 
-          cat > public/index.html <<'EOF'
+          cat > docs/_public/index.html <<'EOF'
           <!doctype html>
           <meta http-equiv="refresh" content="0; url=latest/">
           <a href="latest/">Go to latest documentation</a>
@@ -60,8 +60,8 @@ jobs:
       - name: pages_artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          name: docs-html
-          path: docs/_build/html
+          name: docs-latest
+          path: docs/_public/latest/
           retention-days: 14
   #--------------#
   #--- DEPLOY ---#
@@ -71,10 +71,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment_latest.outputs.page_url }}
     steps:
-      - name: pages_deploy
-        id: deployment
+      - name: pages_deploy_latest
+        id: deployment_latest
         uses: actions/deploy-pages@v4
         with:
-          artifact_name: docs-html
+          artifact_name: docs-latest

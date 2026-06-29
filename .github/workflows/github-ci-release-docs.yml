@@ -97,7 +97,7 @@ jobs:
                   }
               )
 
-          Path("docs/_public/_static/switcher.json").write_text(
+          Path("docs/_static/switcher.json").write_text(
               json.dumps(switcher, indent=2) + "\n",
               encoding="utf-8",
           )
