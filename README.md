@@ -1,3 +1,19 @@
+<div align="center">
+
+[![Release](https://img.shields.io/github/v/release/eet-tub/pydpeet)](https://github.com/eet-tub/pydpeet/releases)
+[![PyPI](https://img.shields.io/pypi/v/pydpeet)](https://pypi.org/project/pydpeet/)
+[![Docs](https://img.shields.io/badge/docs-latest-blue)](https://eet-tub.github.io/pydpeet/)
+[![License](https://img.shields.io/github/license/eet-tub/pydpeet)](LICENSE)
+
+</div>
+
+<!-- [![Python](https://img.shields.io/pypi/pyversions/pydpeet)](https://pypi.org/project/pydpeet/)
+[![CI](https://github.com/eet-tub/pydpeet/actions/workflows/github-ci.yml/badge.svg)](https://github.com/eet-tub/pydpeet/actions/workflows/github-ci.yml)
+[![DOI](https://zenodo.org/badge/DOI/<DOI>.svg)](https://doi.org/<DOI>)
+[![Coverage](https://codecov.io/gh/eet-tub/pydpeet/branch/main/graph/badge.svg)](https://codecov.io/gh/eet-tub/pydpeet)
+[![Downloads](https://img.shields.io/pypi/dm/pydpeet)](https://pypi.org/project/pydpeet/)
+[![Status](https://joss.theoj.org/papers/<paper-id>/status.svg)](...) -->
+
 # PyDPEET - Fast and Easy Battery Data Unification, Processing, and Analysis
 
 ## Contact
@@ -42,15 +58,29 @@ Processed data can be exported to highly efficient Parquet files to be stored an
 
 ### For Users
 
-Please refer to the [installation guide](https://eet-tub.github.io/pydpeet/installation.html) at our GitHub Pages.
+Install PyDPEET directly from PyPI using uv or pip.
+
+```
+uv add pydpeet
+```
+
+or
+
+```
+pip install pydpeet
+```
+
+For detailed installation instructions, see the [installation guide](https://eet-tub.github.io/pydpeet/installation.html) at our GitHub Pages.
 
 ### For Developers
 
 Please refer to the [developer guide](https://eet-tub.github.io/pydpeet/developer.html) at our GitHub Pages.
 
-## Current Status
+<!-- ## Current Status -->
 
 ## Roadmap
+
+Planned features and ongoing work are tracked in the [Roadmap](https://github.com/orgs/eet-tub/projects/3) at our GitHub Projects.
 
 <!-- ## FAQ -->
 
@@ -58,18 +88,26 @@ Please refer to the [developer guide](https://eet-tub.github.io/pydpeet/develope
 
 ### Reporting Issues
 
+If you encounter an issue, please open a GitHub issue and provide as much information as possible, including:
+
+- a minimal reproducible example
+- cycler model
+- software version
+- export settings
+- battery information
+- error messages and stack traces (if available)
+
 ### Request for Data Conversion
+If PyDPEET cannot read or convert your data, please open an issue or send us sample data via email (pydpeet@eet.tu-berlin.de).
 
-### Development Guidelines
+- cycler model
+- software version
+- export settings
+- battery type
+- measurement description
 
-Please refer to the [developer guide](https://eet-tub.github.io/pydpeet/developer.html) at our GitHub Pages.
+### Contributing New Features
 
-<!-- ### Development Workflow -->
+Contributions are always welcome! If you would like to add a new feature, we recommend discussing your idea in a GitHub issue before starting implementation. This helps avoid duplicate work and ensures that the proposed functionality aligns with the project's goals.
 
-<!-- #### Basic Setup -->
-
-<!-- #### Pre-Commit Hook -->
-
-<!-- #### Autogeneration -->
-
-<!-- #### Linting and Formatting -->
+Please refer to the [Developer Guide](https://eet-tub.github.io/pydpeet/developer.html) for information on setting up a development environment, coding standards, testing, documentation, and the pull request workflow.
