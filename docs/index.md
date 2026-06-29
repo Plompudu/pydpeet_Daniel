@@ -3,7 +3,6 @@
 :hidden:
 
 installation
-quickstart
 examples/index
 api/index
 developer

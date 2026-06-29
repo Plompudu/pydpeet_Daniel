@@ -13,7 +13,7 @@ The following publications showcase research carried out using PyDPEET. Where av
 
 <div>
 
-```{image} 2604_01_KWB_OCV/KWB2026_schloesser_Preview.png
+```{image} 2026-04_02_KWB_OCV/KWB2026_schloesser_Preview.png
 :width: 100%
 :target: https://doi.org/10.13140/RG.2.2.35966.75843
 ```
@@ -55,7 +55,7 @@ Schlösser, A., Otto, M., & Kowal, J. (2026, April 14). Automated OCV Extraction
 
 <div>
 
-```{image} 2604_01_KWB_PyDPEET/KWB2026_otto_Preview.png
+```{image} 2026-04_01_KWB_PyDPEET/KWB2026_otto_Preview.png
 :width: 100%
 :target: https://doi.org/10.13140/RG.2.2.35127.89768
 ```
@@ -74,7 +74,7 @@ PyDPEET ("Data Processing for Electrical Energy Storage Technologies") is an ope
 
 ### Resources
 
-- {doc}`Example Notebook <2604_01_KWB_PyDPEET/Usage_Example>`
+- {doc}`Example Notebook <2026-04_01_KWB_PyDPEET/Usage_Example>`
 - [Poster PDF](https://doi.org/10.13140/RG.2.2.35127.89768)
 - [DOI](https://doi.org/10.13140/RG.2.2.35127.89768)
 
