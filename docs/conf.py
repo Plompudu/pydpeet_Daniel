@@ -98,10 +98,6 @@ html_theme = "pydata_sphinx_theme"
 
 html_static_path = ["_static"]  # Path for custom static files (e.g., CSS, images)
 
-html_css_files = [
-    "custom.css",
-]
-
 html_theme_options = {
     "navbar_align": "content",  # Align navbar with content area
     "show_nav_level": 4,  # Depth of navigation tree shown
