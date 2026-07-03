@@ -18,9 +18,7 @@
 
 ## Developers
 
-- Eleni Kiometzis (naftet)
 - Max Thorn (northmaybe)
-- Felix Weidlich ()
 
 ## Inactive
 
