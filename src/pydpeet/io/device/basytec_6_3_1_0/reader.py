@@ -30,6 +30,9 @@ def _to_dataframe(input_path: str) -> tuple[pd.DataFrame, str]:
 
     if not metadata_lines:
         logging.warning("The file does not contain expected metadata lines starting with '~'.")
+        raise ValueError(
+            "The file does not contain expected metadata lines starting with '~'. " "Cannot determine column headers."
+        )
 
     # The last metadata line is used as the header; remove it from metadata_lines.
     header_line = metadata_lines.pop().lstrip("~").strip()
