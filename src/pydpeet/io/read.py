@@ -92,8 +92,74 @@ def convert(
         - the provided input path does not exist
         - an input path has an invalid type
         - a list contains unsupported entries
-        - no configuration could be auto-detected
+
+    Notes
+    -----
+    The returned dataframe follows the standardized PyDPEET format
+    contains following columns, when available in the raw data and depending on the selected device configuration:
+
+    - ``Date_Time``
+    - ``Test_Time[s]``
+    - ``Voltage[V]``
+    - ``Current[A]``
+    - ``Step_Count``
+    - ``Temperature[°C]``
+    - ``EIS_f[Hz]``
+    - ``EIS_Z_Real[Ohm]``
+    - ``EIS_Z_Imag[Ohm]``
+
+    depending on the available raw data and the selected device configuration.
+
+    Examples
+    --------
+    More Usage Examples can be found in following tutorial notebooks:
+        :doc:`Tutorial 01: Convert and Import <../../examples/notebooks/Tutorial_01_Convert_Import>`
+
+    Read a single file:
+
+    >>> import pydpeet as eet
+    >>> df = eet.read(
+    ...     config="neware_8_0_0_516",
+    ...     input_path="measurement.csv",
+    ... )
+
+    Read all files in a directory:
+
+    >>> df = eet.read(
+    ...     config="neware_8_0_0_516",
+    ...     input_path="data/",
+    ... )
+
+    Read multiple files and directories:
+
+    >>> dfs = eet.read(
+    ...     config="neware_8_0_0_516",
+    ...     input_path=[
+    ...         "measurement_01.csv",
+    ...         "measurement_02.csv",
+    ...         "folder_with_measurements/",
+    ...     ],
+    ... )
+
+    Keep additional raw columns:
+
+    >>> df = eet.read(
+    ...     config="neware_8_0_0_516",
+    ...     input_path="measurement.csv",
+    ...     keep_all_additional_data=True,
+    ... )
+
+
+
+    See Also
+    --------
+    convert : Lower-level conversion interface.
+    write : Export unified PyDPEET dataframes.
+    merge_into_series : Merge multiple datasets into a continuous series.
     """
+    # References
+    # ----------
+    # """
 
     _guardrail_boolean(keep_all_additional_data, hard_fail_none=True, hard_fail_wrong_type=True)
 

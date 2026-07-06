@@ -196,8 +196,6 @@ ReadConfig.Text._ALL = (
     ReadConfig.Zahner_new_3,
 )
 
-# TODO alle probieren und results speichern und dann dem User die auswahl lassen welche davon die richtigen sind
-# TODO und dann kann er den rest selber löschen?
 
 _STANDARD_COLUMNS = [
     "Meta_Data",
