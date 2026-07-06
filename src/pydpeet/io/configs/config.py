@@ -1,5 +1,4 @@
 from collections.abc import Callable, Iterable
-
 from enum import Enum, auto, nonmember
 from typing import Any
 
@@ -67,7 +66,10 @@ import pydpeet.io.device.zahner_new.reader as zahner_new_reader
 
 
 class _FiletypeIterable(type):
-    """Metaclass that makes a filetype group iterable over its ALL set."""
+    """Metaclass that makes a filetype group iterable over its _ALL set."""
+
+    # type annotation to _FiletypeIterable metaclass (forward reference via string) so mypy knows the attribute exists
+    _ALL: "tuple[ReadConfig, ...]"
 
     def __iter__(cls):
         return iter(cls._ALL)
@@ -81,19 +83,19 @@ class ReadConfig(Enum):
     Links device specific reader, formatter and mapper via enums.
     """
 
-    Zahner_1 = auto()                   # .txt / .csv
-    Zahner_2 = auto()                   # .txt / .csv
-    Zahner_new_1 = auto()               # .txt / .csv
-    Zahner_new_2 = auto()               # .txt / .csv
-    Zahner_new_3 = auto()               # .txt / .csv
-    Safion_1_9 = auto()                 # .txt
-    Parstat_2_63_3 = auto()             # .txt / .csv
-    Neware_8_0_0_516 = auto()           # .xls / .xlsx
-    Digatron_4_20_6_236 = auto()        # .csv
-    Digatron_EIS_4_20_6_236 = auto()    # .csv
-    BaSyTec_6_3_1_0 = auto()            # .txt
-    Arbin_8_00_PV221201 = auto()        # .xls / .xlsx
-    Arbin_4_23_PV090331 = auto()        # .xls / .xlsx
+    Zahner_1 = auto()  # .txt / .csv
+    Zahner_2 = auto()  # .txt / .csv
+    Zahner_new_1 = auto()  # .txt / .csv
+    Zahner_new_2 = auto()  # .txt / .csv
+    Zahner_new_3 = auto()  # .txt / .csv
+    Safion_1_9 = auto()  # .txt
+    Parstat_2_63_3 = auto()  # .txt / .csv
+    Neware_8_0_0_516 = auto()  # .xls / .xlsx
+    Digatron_4_20_6_236 = auto()  # .csv
+    Digatron_EIS_4_20_6_236 = auto()  # .csv
+    BaSyTec_6_3_1_0 = auto()  # .txt
+    Arbin_8_00_PV221201 = auto()  # .xls / .xlsx
+    Arbin_4_23_PV090331 = auto()  # .xls / .xlsx
     Custom = auto()
 
     @nonmember

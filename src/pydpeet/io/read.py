@@ -7,7 +7,7 @@ from typing import Optional, TypeAlias
 
 import pandas as pd
 
-from pydpeet.io.configs.config import ReadConfig, _EXTENSION_GROUPS
+from pydpeet.io.configs.config import _EXTENSION_GROUPS, ReadConfig
 from pydpeet.io.convert import (
     _convert_file,
     _convert_files_in_directory,
@@ -172,7 +172,9 @@ def convert(
             if os.path.isfile(input_path):
                 return _convert_file(config, input_path, output_path, keep_all_additional_data, custom_folder_path)
             if os.path.isdir(input_path):
-                return _convert_files_in_directory(config, input_path, output_path, keep_all_additional_data, custom_folder_path)
+                return _convert_files_in_directory(
+                    config, input_path, output_path, keep_all_additional_data, custom_folder_path
+                )
             raise ValueError("Input path is invalid!")
         if isinstance(input_path, list):
             results: list[pd.DataFrame | list[pd.DataFrame] | None] = []
@@ -180,9 +182,15 @@ def convert(
                 if not isinstance(item, str):
                     raise ValueError("Input path item is of invalid type!")
                 if os.path.isfile(item):
-                    results.append(_convert_file(config, item, output_path, keep_all_additional_data, custom_folder_path))
+                    results.append(
+                        _convert_file(config, item, output_path, keep_all_additional_data, custom_folder_path)
+                    )
                 elif os.path.isdir(item):
-                    results.append(_convert_files_in_directory(config, item, output_path, keep_all_additional_data, custom_folder_path))
+                    results.append(
+                        _convert_files_in_directory(
+                            config, item, output_path, keep_all_additional_data, custom_folder_path
+                        )
+                    )
                 else:
                     raise ValueError("Input path item is invalid!")
             return results
@@ -209,7 +217,7 @@ def convert(
         else:
             raise ValueError("Input path is invalid!")
 
-    results: list[pd.DataFrame] = []
+    results = []
     for fp in all_files:
         group = _EXTENSION_GROUPS.get(Path(fp).suffix.lower())
         if group is None:
@@ -229,7 +237,7 @@ def convert(
         logging.error("No config could successfully process any file")
         raise ValueError("No files could be processed!")
 
-    return results[0] if input_was_str and os.path.isfile(input_path) else results
+    return results[0] if isinstance(input_path, str) and os.path.isfile(input_path) else results
 
 
 def read(
@@ -247,4 +255,3 @@ def read(
     See :func:`convert` for full documentation.
     """
     return convert(config, input_path, None, keep_all_additional_data, custom_folder_path)  # type: ignore[return-value]
-
