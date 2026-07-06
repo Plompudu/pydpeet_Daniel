@@ -2,6 +2,21 @@ import pandas as pd
 
 from pydpeet.io.configs.const import PANDAS_EXCEL_ENGINE
 
+# variant column name (from file) → canonical column name (expected by mapper)
+_COLUMN_ALIASES = {
+    "Data Point": "Data_Point",
+    "Date Time": "Date_Time",
+    "Test Time (s)": "Test_Time(s)",
+    "Current (A)": "Current(A)",
+    "Voltage (V)": "Voltage(V)",
+    "Aux_Temperature_1 (C)": "Temperature (C)_1",
+}
+
+
+def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
+    df.columns = [_COLUMN_ALIASES.get(col, col) for col in df.columns]
+    return df
+
 
 def _to_dataframe(input_path: str) -> tuple[pd.DataFrame, str]:
     """
@@ -45,13 +60,13 @@ def _read_sheets(excel_file: pd.ExcelFile) -> tuple[pd.DataFrame, str]:
         if sheet_name.startswith("Channel"):
             # if it´s the first sheet, that starts with the channel, it gets added to df
             if iterator == 0:
-                arbin_df = excel_file.parse(sheet_name, header=0)
+                arbin_df = _normalize_columns(excel_file.parse(sheet_name, header=0))
             # if it´s the second or higher Sheet, it will be appended without the header and the first row,
             # because first row of 2nd sheet and last row of first sheet are the same
             else:
                 # get Data from further Sheet(s)
                 # remove the first two rows (header and multiple row)
-                further_sheet_data = excel_file.parse(sheet_name, header=0).iloc[1:]
+                further_sheet_data = _normalize_columns(excel_file.parse(sheet_name, header=0)).iloc[1:]
                 # concat both sheets into one
                 arbin_df = pd.concat([arbin_df, further_sheet_data], ignore_index=True)
             iterator += 1
