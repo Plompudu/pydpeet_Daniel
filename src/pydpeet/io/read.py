@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import logging
 import os
 from pathlib import Path
-from typing import Optional, TypeAlias  # Add this import
+from typing import Optional, TypeAlias
 
 import pandas as pd
 
-from pydpeet.io.configs.config import ReadConfig
+from pydpeet.io.configs.config import _EXTENSION_GROUPS, ReadConfig
 from pydpeet.io.convert import (
     _convert_file,
     _convert_files_in_directory,
@@ -17,14 +18,15 @@ ConfigLike: TypeAlias = ReadConfig | str
 PathLike: TypeAlias = str | Path
 
 
-def read(
-    config: ConfigLike,
-    input_path: object,
+def convert(
+    config: Optional[ConfigLike] = None,
+    input_path: object = None,
+    output_path: Optional[str] = None,
     keep_all_additional_data: bool = False,
     custom_folder_path: Optional[str] = None,
-) -> pd.DataFrame | list[pd.DataFrame]:
+) -> pd.DataFrame | list[pd.DataFrame] | None:
     """
-    Read and convert battery test data into the unified PyDPEET format.
+    Convert battery test data into the unified PyDPEET format.
 
     This is the main high-level import function of PyDPEET. The function
     automatically detects whether the provided input path points to a file,
@@ -38,7 +40,7 @@ def read(
 
     Parameters
     ----------
-    config : ConfigLike
+    config : ConfigLike, optional
         Device configuration used for parsing and mapping the raw battery
         test data into the unified PyDPEET format.
 
@@ -48,6 +50,8 @@ def read(
         - a custom configuration object
         - a configuration dictionary
 
+        If ``None`` (default), the filetype is auto-detected from the file
+        extension and each matching configuration is tried until one succeeds.
     input_path : str | list[str]
         Path to the input data.
 
@@ -56,6 +60,10 @@ def read(
         - path to a single raw data file
         - path to a directory containing raw data files
         - list of file and/or directory paths
+
+    output_path : str, optional
+        If provided, the converted data is written to this directory.
+        When ``None`` (default), the converted DataFrames are returned.
 
     keep_all_additional_data : bool, default=False
         If ``True``, all additional columns that are not part of the unified
@@ -69,11 +77,12 @@ def read(
 
     Returns
     -------
-    pandas.DataFrame | list[pandas.DataFrame]
+    pandas.DataFrame | list[pandas.DataFrame] | None
         Converted dataframe(s) in the unified PyDPEET format.
 
-        - If a single file or directory is provided, a single dataframe is returned.
-        - If a list of paths is provided, a list of dataframes is returned.
+        - If a single file is provided, a single dataframe is returned.
+        - If a directory or list of paths is provided, a list of dataframes is returned.
+        - If ``output_path`` is provided, ``None`` is returned after writing.
 
     Raises
     ------
@@ -152,32 +161,97 @@ def read(
     # ----------
     # """
 
-    # Validate boolean parameter using guardrail
     _guardrail_boolean(keep_all_additional_data, hard_fail_none=True, hard_fail_wrong_type=True)
 
-    if isinstance(input_path, str):
-        if os.path.isfile(input_path):
-            return _convert_file(config, input_path, None, keep_all_additional_data, custom_folder_path)
-        elif os.path.isdir(input_path):
-            return _convert_files_in_directory(config, input_path, None, keep_all_additional_data, custom_folder_path)
-        else:
+    if isinstance(config, str):
+        config = ReadConfig._from_string(config)
+
+    # ---- explicit config: use existing helpers (preserves per-config logic like _find_main_files) ----
+    if config is not None:
+        if isinstance(input_path, str):
+            if os.path.isfile(input_path):
+                return _convert_file(config, input_path, output_path, keep_all_additional_data, custom_folder_path)
+            if os.path.isdir(input_path):
+                return _convert_files_in_directory(
+                    config, input_path, output_path, keep_all_additional_data, custom_folder_path
+                )
             raise ValueError("Input path is invalid!")
-    elif isinstance(input_path, list):
-        dfs = []
-        for input_item in input_path:
-            if isinstance(input_item, str):
-                if os.path.isfile(input_item):
-                    dfs.append(_convert_file(config, input_item, None, keep_all_additional_data, custom_folder_path))
-                elif os.path.isdir(input_item):
-                    dfs.append(
+        if isinstance(input_path, list):
+            results: list[pd.DataFrame | list[pd.DataFrame] | None] = []
+            for item in input_path:
+                if not isinstance(item, str):
+                    raise ValueError("Input path item is of invalid type!")
+                if os.path.isfile(item):
+                    results.append(
+                        _convert_file(config, item, output_path, keep_all_additional_data, custom_folder_path)
+                    )
+                elif os.path.isdir(item):
+                    results.append(
                         _convert_files_in_directory(
-                            config, input_item, None, keep_all_additional_data, custom_folder_path
+                            config, item, output_path, keep_all_additional_data, custom_folder_path
                         )
                     )
                 else:
                     raise ValueError("Input path item is invalid!")
-            else:
-                raise ValueError("Input path item is of invalid type!")
-        return dfs
-    else:
+            return results
         raise ValueError("Input path is of invalid type!")
+
+    # ---- auto-detection: flatten everything to files, try configs per file ----
+    logging.warning("No config specified — using automatic config detection")
+    if not isinstance(input_path, str | list):
+        raise ValueError("Input path is of invalid type!")
+
+    all_files: list[str] = []
+    input_was_str = isinstance(input_path, str)
+
+    for raw in [input_path] if input_was_str else input_path:
+        if not isinstance(raw, str):
+            raise ValueError("Input path item is of invalid type!")
+        if os.path.isfile(raw):
+            all_files.append(raw)
+        elif os.path.isdir(raw):
+            dir_files = [os.path.join(raw, f) for f in os.listdir(raw) if os.path.isfile(os.path.join(raw, f))]
+            if not dir_files:
+                raise ValueError(f"Directory '{raw}' is empty or contains no files")
+            all_files.extend(dir_files)
+        else:
+            raise ValueError("Input path is invalid!")
+
+    results = []
+    for fp in all_files:
+        group = _EXTENSION_GROUPS.get(Path(fp).suffix.lower())
+        if group is None:
+            logging.warning("Could not detect filetype for '%s', skipping", fp)
+            continue
+        for cfg in group:
+            try:
+                logging.info("trying config %s for file %s", cfg, fp)
+                result = _convert_file(cfg, fp, output_path, keep_all_additional_data, custom_folder_path)
+                logging.info("config %s succeeded for file %s", cfg, fp)
+                results.append(result)
+                break
+            except Exception as e:
+                logging.warning("config %s failed for %s: %s", cfg, fp, e)
+
+    if not results:
+        logging.error("No config could successfully process any file")
+        raise ValueError("No files could be processed!")
+
+    return results[0] if isinstance(input_path, str) and os.path.isfile(input_path) else results
+
+
+def read(
+    config: Optional[ConfigLike] = None,
+    input_path: object = None,
+    keep_all_additional_data: bool = False,
+    custom_folder_path: Optional[str] = None,
+) -> pd.DataFrame | list[pd.DataFrame]:
+    """
+    Read and convert battery test data into the unified PyDPEET format.
+
+    Convenience wrapper around :func:`convert` that always returns DataFrames
+    (no ``output_path`` for saving files).
+
+    See :func:`convert` for full documentation.
+    """
+    return convert(config, input_path, None, keep_all_additional_data, custom_folder_path)  # type: ignore[return-value]

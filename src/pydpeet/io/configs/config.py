@@ -1,5 +1,5 @@
-from collections.abc import Callable
-from enum import Enum, auto
+from collections.abc import Callable, Iterable
+from enum import Enum, auto, nonmember
 from typing import Any
 
 from pandas import DataFrame
@@ -65,25 +65,50 @@ import pydpeet.io.device.zahner_new.mapper as zahner_new_mapper
 import pydpeet.io.device.zahner_new.reader as zahner_new_reader
 
 
+class _FiletypeIterable(type):
+    """Metaclass that makes a filetype group iterable over its _ALL set."""
+
+    # type annotation to _FiletypeIterable metaclass (forward reference via string) so mypy knows the attribute exists
+    _ALL: "tuple[ReadConfig, ...]"
+
+    def __iter__(cls):
+        return iter(cls._ALL)
+
+    def __len__(cls):
+        return len(cls._ALL)
+
+
 class ReadConfig(Enum):
     """
     Links device specific reader, formatter and mapper via enums.
     """
 
-    Zahner_1 = auto()
-    Zahner_2 = auto()
-    Zahner_new_1 = auto()
-    Zahner_new_2 = auto()
-    Zahner_new_3 = auto()
-    Safion_1_9 = auto()
-    Parstat_2_63_3 = auto()
-    Neware_8_0_0_516 = auto()
-    Digatron_4_20_6_236 = auto()
-    Digatron_EIS_4_20_6_236 = auto()
-    BaSyTec_6_3_1_0 = auto()
-    Arbin_8_00_PV221201 = auto()
-    Arbin_4_23_PV090331 = auto()
+    Zahner_1 = auto()  # .txt / .csv
+    Zahner_2 = auto()  # .txt / .csv
+    Zahner_new_1 = auto()  # .txt / .csv
+    Zahner_new_2 = auto()  # .txt / .csv
+    Zahner_new_3 = auto()  # .txt / .csv
+    Safion_1_9 = auto()  # .txt
+    Parstat_2_63_3 = auto()  # .txt / .csv
+    Neware_8_0_0_516 = auto()  # .xls / .xlsx
+    Digatron_4_20_6_236 = auto()  # .csv
+    Digatron_EIS_4_20_6_236 = auto()  # .csv
+    BaSyTec_6_3_1_0 = auto()  # .txt
+    Arbin_8_00_PV221201 = auto()  # .xls / .xlsx
+    Arbin_4_23_PV090331 = auto()  # .xls / .xlsx
     Custom = auto()
+
+    @nonmember
+    class Excel(metaclass=_FiletypeIterable):
+        """ReadConfigs for Excel files (.xls/.xlsx)."""
+
+    @nonmember
+    class Csv(metaclass=_FiletypeIterable):
+        """ReadConfigs for CSV files."""
+
+    @nonmember
+    class Text(metaclass=_FiletypeIterable):
+        """ReadConfigs for text files."""
 
     @classmethod
     def _from_string(cls, value: str) -> "ReadConfig":
@@ -142,6 +167,36 @@ class ReadConfig(Enum):
             bool: True if maybe_config is not a member of the ReadConfig enum or its value; False otherwise.
         """
         return not ReadConfig._exists(value)
+
+
+# filetype groupings for automatic selection
+_EXTENSION_GROUPS: dict[str, Iterable[ReadConfig]] = {
+    ".xls": ReadConfig.Excel,
+    ".xlsx": ReadConfig.Excel,
+    ".csv": ReadConfig.Csv,
+    ".txt": ReadConfig.Text,
+}
+
+# order changes Priority, we choose Alphabetical order
+ReadConfig.Excel._ALL = (
+    ReadConfig.Arbin_4_23_PV090331,
+    ReadConfig.Arbin_8_00_PV221201,
+    ReadConfig.Neware_8_0_0_516,
+)
+ReadConfig.Csv._ALL = (
+    ReadConfig.Digatron_4_20_6_236,
+    ReadConfig.Digatron_EIS_4_20_6_236,
+)
+ReadConfig.Text._ALL = (
+    ReadConfig.BaSyTec_6_3_1_0,
+    ReadConfig.Parstat_2_63_3,
+    ReadConfig.Safion_1_9,
+    ReadConfig.Zahner_1,
+    ReadConfig.Zahner_2,
+    ReadConfig.Zahner_new_1,
+    ReadConfig.Zahner_new_2,
+    ReadConfig.Zahner_new_3,
+)
 
 
 _STANDARD_COLUMNS = [
