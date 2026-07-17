@@ -1658,7 +1658,7 @@ wheels = [
 
 [[package]]
 name = "pydpeet"
-version = "0.3.1"
+version = "0.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "bibtexparser" },
@@ -1701,16 +1701,16 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "bibtexparser", specifier = "==1.4.4" },
-    { name = "ipykernel", specifier = ">=7.2.0" },
-    { name = "matplotlib", specifier = "==3.10.8" },
-    { name = "numba", specifier = "==0.64.0" },
-    { name = "numpy", specifier = "==2.3.3" },
-    { name = "pandas", specifier = "==3.0.3" },
-    { name = "pyarrow", specifier = "==19.0.1" },
-    { name = "python-calamine", specifier = ">=0.3.1" },
-    { name = "scikit-learn", specifier = "==1.8.0" },
-    { name = "scipy", specifier = "==1.17.1" },
+    { name = "bibtexparser", specifier = "~=1.4" },
+    { name = "ipykernel", specifier = "~=7.2" },
+    { name = "matplotlib", specifier = "~=3.10" },
+    { name = "numba", specifier = "~=0.64" },
+    { name = "numpy", specifier = "~=2.3" },
+    { name = "pandas", specifier = "~=3.0" },
+    { name = "pyarrow", specifier = "~=19.0" },
+    { name = "python-calamine", specifier = "~=0.3" },
+    { name = "scikit-learn", specifier = "~=1.8" },
+    { name = "scipy", specifier = "~=1.17" },
 ]
 
 [package.metadata.requires-dev]

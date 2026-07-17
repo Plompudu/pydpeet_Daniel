@@ -20,16 +20,16 @@ maintainers = [
 ]
 
 dependencies = [
-    "pandas==3.0.3",
-    "numpy==2.3.3",
-    "pyarrow==19.0.1",
-    "python-calamine>=0.3.1",
-    "numba==0.64.0",
-    "matplotlib==3.10.8",
-    "scipy==1.17.1",
-    "bibtexparser==1.4.4",
-    "scikit-learn==1.8.0",
-    "ipykernel>=7.2.0",
+    "pandas~=3.0",
+    "numpy~=2.3",
+    "pyarrow~=19.0",
+    "python-calamine~=0.3",
+    "numba~=0.64",
+    "matplotlib~=3.10",
+    "scipy~=1.17",
+    "bibtexparser~=1.4",
+    "scikit-learn~=1.8",
+    "ipykernel~=7.2",
 ]
 requires-python = ">=3.12"
 readme = { file = "README.md", content-type = "text/markdown" }
