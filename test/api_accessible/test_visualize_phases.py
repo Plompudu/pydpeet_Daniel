@@ -78,129 +78,122 @@ class Test_visualize_phases_df:
         )
 
 
-# class Test_visualize_phases_config:
-#     def test_valid(self, base_args, caplog):
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_none(self, base_args):
-#         base_args["config"] = None
-#         _assert_raises_and_print(AttributeError, visualize_phases, **base_args)
-#
-#     def test_wrong_type(self, base_args):
-#         base_args["config"] = "wrong type"
-#         assert not isinstance(base_args["config"], dict)
-#         _assert_raises_and_print(AttributeError, visualize_phases, **base_args)
-#
-#     def test_use_lines_for_segments_true(self, base_args, caplog):
-#         base_args["config"].use_lines_for_segments = True
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_use_lines_for_segments_false(self, base_args, caplog):
-#         base_args["config"].use_lines_for_segments = False
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_use_lines_for_segments_none(self, base_args):
-#         base_args["config"].use_lines_for_segments = None
-#         _assert_raises_and_print(ValueError, visualize_phases, **base_args)
-#
-#     def test_use_lines_for_segments_wrong_type(self, base_args):
-#         base_args["config"].use_lines_for_segments = "wrong type"
-#         assert not isinstance(base_args["config"].use_lines_for_segments, bool)
-#         _assert_raises_and_print(ValueError, visualize_phases, **base_args)
-#
-#     def test_show_column_names_true(self, base_args, caplog):
-#         base_args["config"].show_column_names = True
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_show_column_names_false(self, base_args, caplog):
-#         base_args["config"].show_column_names = False
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_show_column_names_none(self, base_args):
-#         base_args["config"].show_column_names = None
-#         _assert_raises_and_print(ValueError, visualize_phases, **base_args)
-#
-#     def test_show_column_names_wrong_type(self, base_args):
-#         base_args["config"].show_column_names = "wrong type"
-#         assert not isinstance(base_args["config"].show_column_names, bool)
-#         _assert_raises_and_print(ValueError, visualize_phases, **base_args)
-#
-#     def test_show_time_true(self, base_args, caplog):
-#         base_args["config"].show_time = True
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_show_time_false(self, base_args, caplog):
-#         base_args["config"].show_time = False
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_show_time_none(self, base_args):
-#         base_args["config"].show_time = None
-#         _assert_raises_and_print(ValueError, visualize_phases, **base_args)
-#
-#     def test_show_time_wrong_type(self, base_args):
-#         base_args["config"].show_time = "wrong type"
-#         assert not isinstance(base_args["config"].show_time, bool)
-#         _assert_raises_and_print(ValueError, visualize_phases, **base_args)
-#
-#     def test_show_id_true(self, base_args, caplog):
-#         base_args["config"].show_id = True
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_show_id_false(self, base_args, caplog):
-#         base_args["config"].show_id = False
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_show_id_none(self, base_args):
-#         base_args["config"].show_id = None
-#         _assert_raises_and_print(ValueError, visualize_phases, **base_args)
-#
-#     def test_show_id_wrong_type(self, base_args):
-#         base_args["config"].show_id = "wrong type"
-#         assert not isinstance(base_args["config"].show_id, bool)
-#         _assert_raises_and_print(ValueError, visualize_phases, **base_args)
-#
-#     def test_show_runtime_true(self, base_args, caplog):
-#         base_args["config"].show_runtime = True
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_show_runtime_false(self, base_args, caplog):
-#         base_args["config"].show_runtime = False
-#         with caplog.at_level(logging.INFO):
-#             result = visualize_phases(**base_args)
-#         assert result is None
-#
-#     def test_show_runtime_none(self, base_args):
-#         base_args["config"].show_runtime = None
-#         _assert_raises_and_print(ValueError, visualize_phases, **base_args)
-#
-#     def test_show_runtime_wrong_type(self, base_args):
-#         base_args["config"].show_runtime = "wrong type"
-#         assert not isinstance(base_args["config"].show_runtime, bool)
-#         _assert_raises_and_print(ValueError, visualize_phases, **base_args)
-
-
 class Test_visualize_phases_config:
-    """Placeholder failing test for variable 'config' of 'visualize_phases'."""
+    def test_valid(self, base_args, caplog):
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
 
-    def test_placeholder(self):
-        raise NotImplementedError("Test not implemented for variable: config of visualize_phases")
+    def test_none(self, base_args):
+        base_args["config"] = None
+        _assert_raises_and_print(AttributeError, visualize_phases, **base_args)
+
+    def test_wrong_type(self, base_args):
+        base_args["config"] = "wrong type"
+        assert not isinstance(base_args["config"], dict)
+        _assert_raises_and_print(AttributeError, visualize_phases, **base_args)
+
+    def test_use_lines_for_segments_true(self, base_args, caplog):
+        base_args["config"].use_lines_for_segments = True
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
+
+    def test_use_lines_for_segments_false(self, base_args, caplog):
+        base_args["config"].use_lines_for_segments = False
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
+
+    def test_use_lines_for_segments_none(self, base_args):
+        base_args["config"].use_lines_for_segments = None
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
+
+    def test_use_lines_for_segments_wrong_type(self, base_args):
+        base_args["config"].use_lines_for_segments = "wrong type"
+        assert not isinstance(base_args["config"].use_lines_for_segments, bool)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
+
+    def test_show_column_names_true(self, base_args, caplog):
+        base_args["config"].show_column_names = True
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
+
+    def test_show_column_names_false(self, base_args, caplog):
+        base_args["config"].show_column_names = False
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
+
+    def test_show_column_names_none(self, base_args):
+        base_args["config"].show_column_names = None
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
+
+    def test_show_column_names_wrong_type(self, base_args):
+        base_args["config"].show_column_names = "wrong type"
+        assert not isinstance(base_args["config"].show_column_names, bool)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
+
+    def test_show_time_true(self, base_args, caplog):
+        base_args["config"].show_time = True
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
+
+    def test_show_time_false(self, base_args, caplog):
+        base_args["config"].show_time = False
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
+
+    def test_show_time_none(self, base_args):
+        base_args["config"].show_time = None
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
+
+    def test_show_time_wrong_type(self, base_args):
+        base_args["config"].show_time = "wrong type"
+        assert not isinstance(base_args["config"].show_time, bool)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
+
+    def test_show_id_true(self, base_args, caplog):
+        base_args["config"].show_id = True
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
+
+    def test_show_id_false(self, base_args, caplog):
+        base_args["config"].show_id = False
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
+
+    def test_show_id_none(self, base_args):
+        base_args["config"].show_id = None
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
+
+    def test_show_id_wrong_type(self, base_args):
+        base_args["config"].show_id = "wrong type"
+        assert not isinstance(base_args["config"].show_id, bool)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
+
+    def test_show_runtime_true(self, base_args, caplog):
+        base_args["config"].show_runtime = True
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
+
+    def test_show_runtime_false(self, base_args, caplog):
+        base_args["config"].show_runtime = False
+        with caplog.at_level(logging.INFO):
+            result = visualize_phases(**base_args)
+        assert result is None
+
+    def test_show_runtime_none(self, base_args):
+        base_args["config"].show_runtime = None
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
+
+    def test_show_runtime_wrong_type(self, base_args):
+        base_args["config"].show_runtime = "wrong type"
+        assert not isinstance(base_args["config"].show_runtime, bool)
+        _assert_raises_and_print(ValueError, visualize_phases, **base_args)
