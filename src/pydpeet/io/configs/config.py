@@ -109,6 +109,10 @@ class ReadConfig(Enum):
         """ReadConfigs for Excel files (.xls/.xlsx)."""
 
     @nonmember
+    class BdfFile(metaclass=_FiletypeIterable):  # not just BDF to fix naming collision
+        """ReadConfigs for BDF files (.bdf/.parquet)."""
+
+    @nonmember
     class Csv(metaclass=_FiletypeIterable):
         """ReadConfigs for CSV files."""
 
@@ -178,9 +182,8 @@ class ReadConfig(Enum):
 
 # filetype groupings for automatic selection
 _EXTENSION_GROUPS: dict[str, Iterable[ReadConfig]] = {
-    ".bdf": (ReadConfig.BDF,),
-    ".gz": (ReadConfig.BDF,),
-    ".parquet": (ReadConfig.BDF,),
+    ".bdf": ReadConfig.BdfFile,
+    ".parquet": ReadConfig.BdfFile,
     ".xls": ReadConfig.Excel,
     ".xlsx": ReadConfig.Excel,
     ".csv": ReadConfig.Csv,
@@ -193,8 +196,8 @@ ReadConfig.Excel._ALL = (
     ReadConfig.Arbin_8_00_PV221201,
     ReadConfig.Neware_8_0_0_516,
 )
+ReadConfig.BdfFile._ALL = (ReadConfig.BDF,)
 ReadConfig.Csv._ALL = (
-    ReadConfig.BDF,
     ReadConfig.Digatron_4_20_6_236,
     ReadConfig.Digatron_EIS_4_20_6_236,
 )
