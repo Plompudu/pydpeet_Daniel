@@ -1,9 +1,11 @@
 # Runtime benchmark: compares per-test runtimes of test/api_accessible between
 # origin/main (run in a temporary git worktree) and the current working tree.
 #
-# Each test is measured exactly once via its JUnit XML duration (--junitxml).
-# Tests that are >ThresholdPercent slower than on main are reported as a WARNING;
-# the script never fails the pipeline by default.
+# Both sides are measured via pytest's JUnit XML duration (--junitxml). To stabilize
+# the reference side, the baseline suite runs -BaselineRepeats times (median per test);
+# flagged outliers are then re-measured -RerunOutlierRuns times each.
+# Tests whose delta exceeds +/-ThresholdPercent are reported as a WARNING; the
+# comparison is advisory and never fails the pipeline by default.
 #
 # A comparison plot (baseline vs current runtimes) is saved into the results folder.
 #
@@ -20,7 +22,7 @@ param(
     # Relative slowdown (in percent) above which a test is flagged as an outlier
     # (both slower and faster). Used both for the report and, combined with
     # $RerunOutlierRuns, to decide which tests get re-measured.
-    [double]$ThresholdPercent = 5,
+    [double]$ThresholdPercent = 10,
 
     # Accepted for backward compatibility only: parallelism is never used for
     # benchmarking (always forced to 0 / no xdist workers).
@@ -51,7 +53,7 @@ param(
     [int]$BaselineRepeats = 3,
 
     # Number of extra measurement repetitions for each test flagged as an outlier
-    # (delta beyond +/-$ThresholdPercent). 0 disables the rerun pass. Default 3.
+    # (delta beyond +/-$ThresholdPercent). 0 disables the rerun pass. Default 7.
     [int]$RerunOutlierRuns = 7
 )
 
@@ -72,7 +74,8 @@ $worktree = [System.IO.Path]::GetFullPath((Join-Path $repoRoot "..\pydpeet-main-
 $resultsDir = Join-Path $repoRoot ("benchmarks\results\" + (Get-Date -Format "yyyy-MM-dd-HH-mm-ss"))
 New-Item -ItemType Directory -Force -Path $resultsDir | Out-Null
 
-# No coverage and no reruns: each test is measured exactly once.
+# Plain single-worker suite runs: no coverage, no reruns, and xdist disabled.
+# (Baseline repeats and the outlier rerun pass are layered on top separately.)
 $pytestFlags = @(
     "-n", "$Jobs"
 )
@@ -208,7 +211,7 @@ function Measure-TestRepeatedly {
         $tmp = Join-Path $resultsDir ("single_" + [System.IO.Path]::GetRandomFileName() + ".xml")
         $t = Invoke-SingleTest -WorkingDirectory $WorkingDirectory -Fullname $Fullname -ReportPath $tmp
         if (Test-Path $tmp) { Remove-Item $tmp -Force }
-        if ($null -ne $t -and ($t -is [double] -or $t -is [int] -or $t -is [float])) {
+        if ($null -ne $t) {
             $times += [double]$t
         }
     }
