@@ -111,7 +111,7 @@ jobs:
       - name: run_tests
         run: |
           uv run pytest -v test/api_accessible \
-            -n 0 \
+            -n 2 \
             --junitxml=report.xml \
             --benchmark-json=benchmark.json \
             --benchmark-quiet \
