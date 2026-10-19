@@ -1,7 +1,5 @@
 """Fetch the Vebtan ``failedFiles`` table and print/write a report grouped by failure reason.
 
-Implements steps 1-3 of ``debug_vebtan/concept``:
-
 1. request every page of ``http://130.149.179.21/database/failedFiles?rows=1000&page=N``
    and read the failed-file table directly from there,
 2. group the entries by their individual failure reason,
